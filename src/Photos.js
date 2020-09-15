@@ -11,6 +11,7 @@ class Photos extends React.Component {
         this.state = {photos: []};
 
         this.addPhotoDialog = this.addPhotoDialog.bind(this);
+        this.removePhoto = this.removePhoto.bind(this);
     }
 
     componentDidMount() {
@@ -41,6 +42,19 @@ class Photos extends React.Component {
     };
 
     /**
+     * removes an item from the list
+     * @param id
+     * @param e
+     */
+    removePhoto = (id, e) => {
+        e.preventDefault();
+
+        this.setState({
+            photos: this.state.photos.slice(0, id).concat(this.state.photos.slice(id + 1))
+        });
+    }
+
+    /**
      * returns a random photo from pre-defined list
      * @returns {string}
      */
@@ -59,9 +73,10 @@ class Photos extends React.Component {
     );
 
     render() {
+        let id = 0;
         const photoElements = this.state.photos.map(photo => {
             return (
-                <card className="photo">
+                <card className="photo" onClick={this.removePhoto.bind(this, id++)}>
                     <img src={photo.src} width={this.size.w} height={this.size.h} alt={photo.alt}/>
                 </card>
             );
