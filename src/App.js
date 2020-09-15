@@ -10,7 +10,7 @@ function App() {
         <Header className="Header" />
         <div className="Users">[users]</div>
         <main>
-            [photos]
+            <Photos/>
         </main>
         <div className="bottom">
             <div className="box">[notes]</div>
