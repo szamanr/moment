@@ -1,0 +1,22 @@
+.Header {
+    display: grid;
+    place-items: center;
+    grid-template-columns: repeat(12, 1fr);
+}
+
+.Header #header-back {
+    grid-column: 1 / 4;
+}
+.Header #header-title {
+    grid-column: 5 / 10;
+}
+.Header #header-favorite {
+    grid-column: 10 / 11;
+}
+.Header #header-menu {
+    grid-column: 11 / 12;
+}
+
+.Header .description {
+    grid-column: 5 / 6;
+}
