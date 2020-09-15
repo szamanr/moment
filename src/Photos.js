@@ -32,14 +32,29 @@ class Photos extends React.Component {
     addPhotoDialog = (e) => {
         e.preventDefault();
 
-        const newPhoto = {src: logo, alt: 'react logo'};
+        const src = this.getRandomPhotoSrc();
+
+        const newPhoto = {src: src, alt: 'react logo'};
         this.setState({
             photos: this.state.photos.concat([newPhoto])
         });
     };
+
+    /**
+     * returns a random photo from pre-defined list
+     * @returns {string}
+     */
+    getRandomPhotoSrc() {
+        const photos = ["6lm10a.png", "angular.png", "banana.jpg", "bedraggled.jpg", "cudgel.jpg", "dog-mask.jpg", "hal-cropped.jpg", "laravel.png", "trip01.png", "trip02.png", "trip03.png"];
+        const photoId = Math.floor(Math.random() * photos.length);
+        return photos[photoId];
+    }
+
     addPhotoElement = (
         <card className="photo photo-add">
-            <a href="" onClick={this.addPhotoDialog}>➕</a>
+            <a href="javascript:void(0)" onClick={this.addPhotoDialog}>
+                <span role="img" aria-label="add-photo">➕</span>
+            </a>
         </card>
     );
 
