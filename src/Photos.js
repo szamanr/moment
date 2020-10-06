@@ -16,9 +16,9 @@ class Photos extends React.Component {
 
     componentDidMount() {
         const photos = [
-            {src: logo, alt: 'react logo'},
-            {src: logo, alt: 'react logo'},
-            {src: logo, alt: 'react logo'}
+            {src: this.getRandomPhotoSrc(), alt: 'default image 1'},
+            {src: this.getRandomPhotoSrc(), alt: 'default image 2'},
+            {src: this.getRandomPhotoSrc(), alt: 'default image 3'}
         ];
         this.setState({
             photos: photos
@@ -54,6 +54,12 @@ class Photos extends React.Component {
         });
     }
 
+    fullscreenPhoto = (id, e) => {
+        e.preventDefault();
+
+        this.props.setFullscreen(e.target);
+    }
+
     /**
      * returns a random photo from pre-defined list
      * @returns {string}
@@ -76,7 +82,7 @@ class Photos extends React.Component {
         let id = 0;
         const photoElements = this.state.photos.map(photo => {
             return (
-                <card className="photo" onClick={this.removePhoto.bind(this, id++)}>
+                <card key={id} className="photo" onClick={this.fullscreenPhoto.bind(this, id++)}>
                     <img src={photo.src} width={this.size.w} height={this.size.h} alt={photo.alt}/>
                 </card>
             );
