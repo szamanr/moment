@@ -7,21 +7,8 @@ class Photos extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = {photos: []};
-
         this.addPhotoDialog = this.addPhotoDialog.bind(this);
         this.removePhoto = this.removePhoto.bind(this);
-    }
-
-    componentDidMount() {
-        const photos = [
-            {src: this.getRandomPhotoSrc(), alt: 'default image 1'},
-            {src: this.getRandomPhotoSrc(), alt: 'default image 2'},
-            {src: this.getRandomPhotoSrc(), alt: 'default image 3'}
-        ];
-        this.setState({
-            photos: photos
-        })
     }
 
     /**
@@ -32,12 +19,10 @@ class Photos extends React.Component {
     addPhotoDialog = (e) => {
         e.preventDefault();
 
-        const src = this.getRandomPhotoSrc();
+        const src = this.props.photoService.getRandomPhotoSrc();
 
         const newPhoto = {src: src, alt: 'react logo'};
-        this.setState({
-            photos: this.state.photos.concat([newPhoto])
-        });
+        this.props.addPhoto(newPhoto);
     };
 
     /**
@@ -48,25 +33,19 @@ class Photos extends React.Component {
     removePhoto = (id, e) => {
         e.preventDefault();
 
-        this.setState({
-            photos: this.state.photos.slice(0, id).concat(this.state.photos.slice(id + 1))
-        });
+        this.props.removePhoto(id);
     }
 
+    /**
+     * opens the selected photo in full screen view
+     *
+     * @param id
+     * @param e
+     */
     fullscreenPhoto = (id, e) => {
         e.preventDefault();
 
         this.props.setFullscreen(e.target);
-    }
-
-    /**
-     * returns a random photo from pre-defined list
-     * @returns {string}
-     */
-    getRandomPhotoSrc() {
-        const photos = ["react.svg", "6lm10a.png", "angular.png", "banana.jpg", "bedraggled.jpg", "cudgel.jpg", "dog-mask.jpg", "hal-cropped.jpg", "laravel.png", "trip01.png", "trip02.png", "trip03.png"];
-        const photoId = Math.floor(Math.random() * photos.length);
-        return photos[photoId];
     }
 
     addPhotoElement = (
@@ -79,7 +58,7 @@ class Photos extends React.Component {
 
     render() {
         let id = 0;
-        const photoElements = this.state.photos.map(photo => {
+        const photoElements = this.props.photos.map(photo => {
             return (
                 <card key={id} className="photo" onClick={this.fullscreenPhoto.bind(this, id++)}>
                     <img src={photo.src} width={this.size.w} height={this.size.h} alt={photo.alt}/>

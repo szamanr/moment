@@ -3,10 +3,11 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import PhotoService from './PhotoService.js';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <App photoService={new PhotoService()} />
   </React.StrictMode>,
   document.getElementById('root')
 );
