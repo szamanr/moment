@@ -4,18 +4,15 @@
     grid-template: auto auto 1fr 1fr / auto 1fr auto;
 }
 
-.App .Header {
-    padding: 2rem;
-    grid-column: 1/4;
-}
-
-.App .Users {
-    grid-column: 3 / 4;
-}
-
-.App main {
+.App .Header, .App main, .App footer {
     grid-column: 1 / 4;
 }
+
+.App .Header {
+    padding: 2rem;
+}
+
+
 
 .App .bottom {
     grid-column: 1 / 4;

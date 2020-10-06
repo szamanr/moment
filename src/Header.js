@@ -9,6 +9,7 @@ function Header() {
             <a id='header-favorite'>⭐</a>
             <a id='header-menu'>...</a>
             <small class="description">22 april 2020</small>
+            <div className="Users">👤 👤 👤 👤</div>
         </div>
     );
 }
