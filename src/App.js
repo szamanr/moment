@@ -8,7 +8,7 @@ import {FaTrash} from 'react-icons/fa';
 class App extends React.Component {
     fullscreenSize = {w: "400px", h: "400px"};
 
-    layout = [
+    defaultLayout = [
         [
             '[Photos]'
         ],
@@ -20,7 +20,7 @@ class App extends React.Component {
     constructor(props, context) {
         super(props, context);
 
-        this.state = {isFullscreen: false, fullscreenElement: null, photos: []};
+        this.state = {isFullscreen: false, fullscreenElement: null, photos: [], layout: this.defaultLayout};
 
         this.setFullscreen = this.setFullscreen.bind(this);
         this.addPhoto = this.addPhoto.bind(this);
@@ -36,6 +36,22 @@ class App extends React.Component {
         this.setState({
             photos: photos
         })
+
+        // TODO: remove. this is just to test if the layout can be modified dynamically.
+        /*setTimeout(() => {
+            this.setState({
+                layout: [
+                    [
+                        '[map]', '[notes]', '[player]'
+                    ],
+                    [
+                        '[Photos]'
+                    ]
+                ]
+            });
+
+            console.log('layout updated!');
+        }, 3000)*/
     }
 
     /**
@@ -107,7 +123,7 @@ class App extends React.Component {
 
     render() {
         const content = (
-            this.layout.map((row, index) => {
+            this.state.layout.map((row, index) => {
                 return (
                     <div className="row" key={index}>
                         {row.map((component, index) => {
