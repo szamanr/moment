@@ -31,3 +31,8 @@
     flex: 1 1 200px;
     margin: 5px;
 }
+
+.App .box, .App footer {
+    display: grid;
+    place-items: center;
+}
