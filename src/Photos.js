@@ -40,15 +40,15 @@ class Photos extends React.Component {
     }
 
     /**
-     * opens the selected photo in full screen view
+     * opens the selected photo in focused view
      *
      * @param id
      * @param e
      */
-    fullscreenPhoto = (id, e) => {
+    focusedPhoto = (id, e) => {
         e.preventDefault();
 
-        this.props.setFullscreen(e.target, id);
+        this.props.setFocused(e.target, id);
     }
 
     addPhotoElement = (
@@ -63,7 +63,7 @@ class Photos extends React.Component {
         let id = 0;
         const photoElements = this.props.photos.map(photo => {
             return (
-                <card key={id} className="photo" onClick={this.fullscreenPhoto.bind(this, id++)}>
+                <card key={id} className="photo" onClick={this.focusedPhoto.bind(this, id++)}>
                     <img src={photo.src} width={this.size.w} height={this.size.h} alt={photo.alt}/>
                 </card>
             );

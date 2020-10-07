@@ -6,7 +6,7 @@ import './global.css';
 import {FaTrash} from 'react-icons/fa';
 
 class App extends React.Component {
-    fullscreenSize = {w: "400px", h: "400px"};
+    focusedSize = {w: "400px", h: "400px"};
 
     defaultLayout = [
         [
@@ -20,11 +20,11 @@ class App extends React.Component {
     constructor(props, context) {
         super(props, context);
 
-        this.state = {isFullscreen: false, fullscreenElement: null, photos: [], layout: this.defaultLayout};
+        this.state = {focusedElement: null, photos: [], layout: this.defaultLayout};
 
-        this.setFullscreen = this.setFullscreen.bind(this);
+        this.setFocused = this.setFocused.bind(this);
         this.addPhoto = this.addPhoto.bind(this);
-        this.removeMainPhoto = this.removeMainPhoto.bind(this);
+        this.removeFocusedPhoto = this.removeFocusedPhoto.bind(this);
     }
 
     componentDidMount() {
@@ -55,15 +55,15 @@ class App extends React.Component {
     }
 
     /**
-     * sets the chosen element to be displayed full-screen
+     * sets the chosen element to be focused, i.e. displayed as the only element in the main view
      *
      * @param element
      * @param id
      */
-    setFullscreen(element = null, id = null) {
+    setFocused(element = null, id = null) {
         this.setState({
-            fullscreenElement: element,
-            fullscreenElementId: id
+            focusedElement: element,
+            focusedElementId: id
         });
     }
 
@@ -90,17 +90,17 @@ class App extends React.Component {
     }
 
     /**
-     * removes the full-screen photo from the list
+     * removes the focused photo from the list
      */
-    removeMainPhoto() {
-        const id = this.state.fullscreenElementId;
+    removeFocusedPhoto() {
+        const id = this.state.focusedElementId;
 
         if (id === null) {
             return;
         }
 
         this.removePhoto(id);
-        this.setFullscreen();
+        this.setFocused();
     }
 
     /**
@@ -114,7 +114,7 @@ class App extends React.Component {
             case ('[Photos]'):
                 return (
                     <Photos photos={this.state.photos} addPhoto={this.addPhoto} removePhoto={this.removePhoto}
-                            setFullscreen={this.setFullscreen} photoService={this.props.photoService}/>
+                            setFocused={this.setFocused} photoService={this.props.photoService}/>
                 );
             default:
                 return componentName;
@@ -144,20 +144,20 @@ class App extends React.Component {
             </main>
         );
 
-        // TODO: for now only works for photos. make it possible to fullscreen any element, such as map, notes.
-        if (this.state.fullscreenElement) {
+        // TODO: for now only works for photos. make it possible to focused any element, such as map, notes.
+        if (this.state.focusedElement) {
             mainDiv = (
-                <main id="main" className="fullscreen">
+                <main id="main" className="focused">
                     <div className="row">
-                        <span className="button danger" id="fullscreen-photo-remove"
-                              onClick={this.removeMainPhoto}><FaTrash/></span>
+                        <span className="button danger" id="focused-photo-remove"
+                              onClick={this.removeFocusedPhoto}><FaTrash/></span>
                     </div>
                     <div className="row">
-                        <card id="fullscreen-photo" className="photo" onClick={() => {
-                            this.setFullscreen()
+                        <card id="focused-photo" className="photo" onClick={() => {
+                            this.setFocused()
                         }}>
-                            <img src={this.state.fullscreenElement.src} alt={this.state.fullscreenElement.alt}
-                                 width={this.fullscreenSize.w} height={this.fullscreenSize.h}
+                            <img src={this.state.focusedElement.src} alt={this.state.focusedElement.alt}
+                                 width={this.focusedSize.w} height={this.focusedSize.h}
                             />
                         </card>
                     </div>
