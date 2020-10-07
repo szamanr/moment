@@ -12,7 +12,7 @@
     padding: 2rem;
 }
 
-.App main.isFullscreen {
+.App main.fullscreen {
     display: grid;
     place-items: center;
 }

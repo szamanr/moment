@@ -13,6 +13,7 @@ class App extends React.Component {
         this.state = {isFullscreen: false, fullscreenElement: null, photos: []};
         this.setFullscreen = this.setFullscreen.bind(this);
         this.addPhoto = this.addPhoto.bind(this);
+        this.removeMainPhoto = this.removeMainPhoto.bind(this);
     }
 
     componentDidMount() {
@@ -28,10 +29,15 @@ class App extends React.Component {
 
     /**
      * sets the chosen element to be displayed full-screen
+     *
      * @param element
+     * @param id
      */
-    setFullscreen(element) {
-        this.setState({fullscreenElement: element});
+    setFullscreen(element = null, id = null) {
+        this.setState({
+            fullscreenElement: element,
+            fullscreenElementId: id
+        });
     }
 
     /**
@@ -46,7 +52,7 @@ class App extends React.Component {
     }
 
     /**
-     * removes a photo
+     * removes a photo with given id
      *
      * @param id
      */
@@ -54,6 +60,20 @@ class App extends React.Component {
         this.setState({
             photos: this.state.photos.slice(0, id).concat(this.state.photos.slice(id + 1))
         });
+    }
+
+    /**
+     * removes the full-screen photo from the list
+     */
+    removeMainPhoto() {
+        const id = this.state.fullscreenElementId;
+
+        if (id === null) {
+            return;
+        }
+
+        this.removePhoto(id);
+        this.setFullscreen();
     }
 
     render() {
@@ -73,8 +93,9 @@ class App extends React.Component {
 
         if (this.state.fullscreenElement) {
             mainDiv = (
-                <main id="main" className="isFullscreen">
-                    <card id="fullscreenPhoto" className="photo" onClick={() => { this.setFullscreen(null) }}>
+                <main id="main" className="fullscreen">
+                    <a id="fullscreen-photo-remove" onClick={this.removeMainPhoto}>🗑</a>
+                    <card id="fullscreen-photo" className="photo" onClick={() => { this.setFullscreen() }}>
                         <img src={this.state.fullscreenElement.src} alt={this.state.fullscreenElement.alt}
                              width={this.fullscreenSize.w} height={this.fullscreenSize.h}
                         />

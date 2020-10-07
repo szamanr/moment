@@ -45,7 +45,7 @@ class Photos extends React.Component {
     fullscreenPhoto = (id, e) => {
         e.preventDefault();
 
-        this.props.setFullscreen(e.target);
+        this.props.setFullscreen(e.target, id);
     }
 
     addPhotoElement = (
