@@ -8,10 +8,20 @@ import {FaTrash} from 'react-icons/fa';
 class App extends React.Component {
     fullscreenSize = {w: "400px", h: "400px"};
 
+    layout = [
+        [
+            '[Photos]'
+        ],
+        [
+            '[map]', '[notes]', '[player]'
+        ],
+    ];
+
     constructor(props, context) {
         super(props, context);
 
         this.state = {isFullscreen: false, fullscreenElement: null, photos: []};
+
         this.setFullscreen = this.setFullscreen.bind(this);
         this.addPhoto = this.addPhoto.bind(this);
         this.removeMainPhoto = this.removeMainPhoto.bind(this);
@@ -77,26 +87,56 @@ class App extends React.Component {
         this.setFullscreen();
     }
 
-    render() {
-        let mainDiv = (
-            <main id="main">
-                <div className="top">
+    /**
+     * initialises a component based on its name. pass components as '[ComponentTag]'.
+     *
+     * @param componentName
+     * @returns {*}
+     */
+    initComponent(componentName) {
+        switch (componentName) {
+            case ('[Photos]'):
+                return (
                     <Photos photos={this.state.photos} addPhoto={this.addPhoto} removePhoto={this.removePhoto}
                             setFullscreen={this.setFullscreen} photoService={this.props.photoService}/>
-                </div>
-                <div className="bottom">
-                    <div className="box">[notes]</div>
-                    <div className="box">[map]</div>
-                    <div className="box">[player]</div>
-                </div>
+                );
+            default:
+                return componentName;
+        }
+    }
+
+    render() {
+        const content = (
+            this.layout.map((row, index) => {
+                return (
+                    <div className="row" key={index}>
+                        {row.map((component, index) => {
+                            return (
+                                <div className="box" key={index}>
+                                    {this.initComponent(component)}
+                                </div>
+                            );
+                        })}
+                    </div>
+                );
+            })
+        );
+
+        let mainDiv = (
+            <main id="main">
+                {content}
             </main>
         );
 
+        // TODO: for now only works for photos. make it possible to fullscreen any element, such as map, notes.
         if (this.state.fullscreenElement) {
             mainDiv = (
                 <main id="main" className="fullscreen">
-                    <span className="button danger" id="fullscreen-photo-remove" onClick={this.removeMainPhoto}><FaTrash /></span>
-                    <card id="fullscreen-photo" className="photo" onClick={() => { this.setFullscreen() }}>
+                    <span className="button danger" id="fullscreen-photo-remove"
+                          onClick={this.removeMainPhoto}><FaTrash/></span>
+                    <card id="fullscreen-photo" className="photo" onClick={() => {
+                        this.setFullscreen()
+                    }}>
                         <img src={this.state.fullscreenElement.src} alt={this.state.fullscreenElement.alt}
                              width={this.fullscreenSize.w} height={this.fullscreenSize.h}
                         />
