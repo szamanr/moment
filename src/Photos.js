@@ -20,9 +20,11 @@ class Photos extends React.Component {
     addPhotoDialog = (e) => {
         e.preventDefault();
 
+        const photoCount = this.props.photos.length;
+
         const src = this.props.photoService.getRandomPhotoSrc();
 
-        const newPhoto = {src: src, alt: 'react logo'};
+        const newPhoto = {src: src, alt: `image ${photoCount}`};
         this.props.addPhoto(newPhoto);
     };
 
