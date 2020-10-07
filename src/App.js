@@ -3,6 +3,7 @@ import './App.css';
 import Header from "./Header";
 import Photos from "./Photos";
 import './global.css';
+import {FaTrash} from 'react-icons/fa';
 
 class App extends React.Component {
     fullscreenSize = {w: "400px", h: "400px"};
@@ -94,7 +95,7 @@ class App extends React.Component {
         if (this.state.fullscreenElement) {
             mainDiv = (
                 <main id="main" className="fullscreen">
-                    <a id="fullscreen-photo-remove" onClick={this.removeMainPhoto}>🗑</a>
+                    <span className="button danger" id="fullscreen-photo-remove" onClick={this.removeMainPhoto}><FaTrash /></span>
                     <card id="fullscreen-photo" className="photo" onClick={() => { this.setFullscreen() }}>
                         <img src={this.state.fullscreenElement.src} alt={this.state.fullscreenElement.alt}
                              width={this.fullscreenSize.w} height={this.fullscreenSize.h}

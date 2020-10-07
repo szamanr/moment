@@ -1,5 +1,6 @@
 import React from "react";
 import './Photos.css';
+import {FaPlus} from 'react-icons/fa'
 
 class Photos extends React.Component {
     size = {w: "150px", h: "150px"};
@@ -49,10 +50,10 @@ class Photos extends React.Component {
     }
 
     addPhotoElement = (
-        <card className="photo photo-add">
-            <a href="javascript:void(0)" onClick={this.addPhotoDialog}>
-                <span role="img" aria-label="add-photo">➕</span>
-            </a>
+        <card id="photo-add" className="photo photo-add">
+            <span className="button brand" onClick={this.addPhotoDialog}>
+                <FaPlus />
+            </span>
         </card>
     );
 

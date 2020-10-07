@@ -8,7 +8,7 @@
     grid-column: 1 / 4;
 }
 .Header #header-title {
-    grid-column: 5 / 10;
+    grid-column: 4 / 10;
 }
 .Header #header-favorite {
     grid-column: 10 / 11;
@@ -22,5 +22,5 @@
 }
 
 .Header .Users {
-    grid-column: 11 / 12;
+    grid-column: 10 / 12;
 }

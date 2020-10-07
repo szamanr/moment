@@ -1,3 +1,27 @@
 a {
     text-decoration: none;
 }
+
+.button {
+    cursor: pointer;
+}
+
+.brand {
+    color: #005dc1;
+}
+
+.alt {
+    color: #C26400;
+}
+
+.success {
+    color: #5dc100;
+}
+
+.warning {
+    color: #c16400;
+}
+
+.danger {
+    color: #c1005d;
+}
