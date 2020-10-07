@@ -148,15 +148,19 @@ class App extends React.Component {
         if (this.state.fullscreenElement) {
             mainDiv = (
                 <main id="main" className="fullscreen">
-                    <span className="button danger" id="fullscreen-photo-remove"
-                          onClick={this.removeMainPhoto}><FaTrash/></span>
-                    <card id="fullscreen-photo" className="photo" onClick={() => {
-                        this.setFullscreen()
-                    }}>
-                        <img src={this.state.fullscreenElement.src} alt={this.state.fullscreenElement.alt}
-                             width={this.fullscreenSize.w} height={this.fullscreenSize.h}
-                        />
-                    </card>
+                    <div className="row">
+                        <span className="button danger" id="fullscreen-photo-remove"
+                              onClick={this.removeMainPhoto}><FaTrash/></span>
+                    </div>
+                    <div className="row">
+                        <card id="fullscreen-photo" className="photo" onClick={() => {
+                            this.setFullscreen()
+                        }}>
+                            <img src={this.state.fullscreenElement.src} alt={this.state.fullscreenElement.alt}
+                                 width={this.fullscreenSize.w} height={this.fullscreenSize.h}
+                            />
+                        </card>
+                    </div>
                 </main>
             );
         }
