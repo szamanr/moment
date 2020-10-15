@@ -57,16 +57,14 @@
 }
 
 /* TODO: svg images don't scale */
-/* TODO: images don't scale well on mobile */
 #focused-element {
     display: flex;
-    /*align-items: center;*/
 }
 
 #focused-element .photo {
-    align-self: center;
-    height: 100%;
-    width: auto;
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
 }
 
 #focused-element .note {
