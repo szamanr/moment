@@ -1,19 +1,18 @@
 import React from 'react';
 import './App.css';
 import Header from "./Header";
+import Notes from "./Notes";
 import Photos from "./Photos";
 import './global.css';
-import {FaTrash} from 'react-icons/fa';
+import {FaTimes, FaTrash} from 'react-icons/fa';
 
 class App extends React.Component {
-    focusedSize = {w: "400px", h: "400px"};
-
     defaultLayout = [
         [
             '[Photos]'
         ],
         [
-            '[map]', '[notes]', '[player]'
+            '[map]', '[Notes]', '[player]'
         ],
     ];
 
@@ -59,11 +58,13 @@ class App extends React.Component {
      *
      * @param element
      * @param id
+     * @param type
      */
-    setFocused(element = null, id = null) {
+    setFocused(element = null, id = null, type = null) {
         this.setState({
             focusedElement: element,
-            focusedElementId: id
+            focusedElementId: id,
+            focusedElementType: type,
         });
     }
 
@@ -116,8 +117,37 @@ class App extends React.Component {
                     <Photos photos={this.state.photos} addPhoto={this.addPhoto} removePhoto={this.removePhoto}
                             setFocused={this.setFocused} photoService={this.props.photoService}/>
                 );
+            case ('[Notes]'):
+                return (
+                    <Notes setFocused={this.setFocused}/>
+                );
             default:
                 return componentName;
+        }
+    }
+
+    /**
+     * renders the focused element in a container corresponding to type
+     *
+     * @param element
+     * @param type
+     * @returns {*}
+     */
+    renderFocusedElement(element, type) {
+        switch (type) {
+            case 'photo':
+                return (
+                    <img className="photo" src={element.src} alt={element.alt}/>
+                );
+            case 'note':
+                return (
+                    <div className="note">
+                        <h3 className="title">{element.title}</h3>
+                        <p className="content" dangerouslySetInnerHTML={{ __html: element.content}}/>
+                    </div>
+                );
+            default:
+                return;
         }
     }
 
@@ -144,22 +174,20 @@ class App extends React.Component {
             </main>
         );
 
-        // TODO: for now only works for photos. make it possible to focused any element, such as map, notes.
         if (this.state.focusedElement) {
             mainDiv = (
                 <main id="main" className="focused">
-                    <div className="row">
-                        <span className="button danger" id="focused-photo-remove"
-                              onClick={this.removeFocusedPhoto}><FaTrash/></span>
+                    <div id="focused-buttons" className="row">
+                        {/* TODO: remove notes */}
+                        <div className="button danger" id="focused-element-remove"
+                             onClick={this.removeFocusedPhoto}><span><FaTrash/></span></div>
+                        <div className="button" id="focused-element-close"
+                             onClick={() => {
+                                 this.setFocused()
+                             }}><span><FaTimes/></span></div>
                     </div>
-                    <div className="row">
-                        <card id="focused-photo" className="photo" onClick={() => {
-                            this.setFocused()
-                        }}>
-                            <img src={this.state.focusedElement.src} alt={this.state.focusedElement.alt}
-                                 width={this.focusedSize.w} height={this.focusedSize.h}
-                            />
-                        </card>
+                    <div id="focused-element" className="row">
+                        {this.renderFocusedElement(this.state.focusedElement, this.state.focusedElementType)}
                     </div>
                 </main>
             );

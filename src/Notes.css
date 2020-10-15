@@ -1,0 +1,22 @@
+#notes {
+    display: grid;
+    grid-template: 1fr 1fr 1fr 1fr 1fr 1fr / auto;
+    height: 100%;
+    width: 100%;
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.notes-item {
+    display: grid;
+    align-items: center;
+    cursor: pointer;
+}
+
+.notes-item:nth-child(even) {
+    background-color: lightgray;
+}
+
+.notes-item > span {
+    padding: 0 5px;
+}
