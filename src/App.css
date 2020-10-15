@@ -4,12 +4,8 @@
     grid-template: auto 1fr auto / auto 1fr auto;
 }
 
-.App .Header, .App main, .App footer {
+.App header, .App main, .App footer {
     grid-column: 1 / 3;
-}
-
-.App .Header {
-    padding: 2rem;
 }
 
 .App main.focused {
@@ -33,6 +29,8 @@
 .App .row .box {
     flex: 1 1 200px;
     margin: 5px;
+    border: solid 1px;
+    border-radius: 5px;
 }
 
 .App .box, .App footer {

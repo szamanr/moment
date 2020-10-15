@@ -1,26 +1,26 @@
-.Header {
+header {
     display: grid;
     place-items: center;
     grid-template-columns: repeat(12, 1fr);
 }
 
-.Header #header-back {
+#header-back {
     grid-column: 1 / 4;
 }
-.Header #header-title {
+#header-title {
     grid-column: 4 / 10;
 }
-.Header #header-favorite {
+#header-favorite {
     grid-column: 10 / 11;
 }
-.Header #header-menu {
+#header-menu {
     grid-column: 11 / 12;
 }
 
-.Header .description {
+.description {
     grid-column: 5 / 6;
 }
 
-.Header .Users {
+.Users {
     grid-column: 10 / 12;
 }

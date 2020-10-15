@@ -4,7 +4,7 @@ import {FaLongArrowAltLeft, FaStar, FaBars, FaUserCircle} from 'react-icons/fa'
 
 function Header() {
     return (
-        <div className="Header">
+        <header className="Header">
             <span className="button brand" id='header-back'><FaLongArrowAltLeft/></span>
             <h3 id='header-title'>moment #001</h3>
             <span className="button brand"  id='header-favorite'><FaStar/></span>
@@ -13,7 +13,7 @@ function Header() {
             <div className="Users">
                 <FaUserCircle/> <FaUserCircle/> <FaUserCircle/> <FaUserCircle/>
             </div>
-        </div>
+        </header>
     );
 }
 
