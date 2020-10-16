@@ -27,11 +27,14 @@ class App extends React.Component {
     }
 
     componentDidMount() {
-        const photos = [
-            {src: this.props.photoService.getRandomPhotoSrc(), alt: 'default image 1'},
-            {src: this.props.photoService.getRandomPhotoSrc(), alt: 'default image 2'},
-            {src: this.props.photoService.getRandomPhotoSrc(), alt: 'default image 3'}
-        ];
+        const photos = [];
+
+        for (let i = 0; i < 30; i++) {
+            photos.push(
+                {src: this.props.photoService.getRandomPhotoSrc(), alt: `default image ${i+1}`}
+            )
+        }
+
         this.setState({
             photos: photos
         })
