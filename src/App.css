@@ -23,7 +23,8 @@ footer {
 .App main {
     display: grid;
     height: 100%;
-    grid-template: auto / auto 1fr auto;
+    grid-template: repeat(12, 33%) / auto 1fr auto;
+    overflow: auto;
 }
 
 .App .row {
@@ -31,14 +32,20 @@ footer {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    overflow-y: auto;
+    grid-row: span 1;
+}
+
+.App .row.double {
+    grid-row: span 2;
 }
 
 .App .row .box {
+    max-height: 100%;
     flex: 1 1 200px;
     margin: 5px;
     border: solid 1px;
     border-radius: 5px;
+    overflow-y: auto;
 }
 
 .App .box, .App footer {

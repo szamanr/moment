@@ -8,12 +8,20 @@ import {FaTimes, FaTrash} from 'react-icons/fa';
 
 class App extends React.Component {
     defaultLayout = [
-        [
-            '[Photos]'
-        ],
-        [
-            '[map]', '[Notes]', '[player]'
-        ],
+        {
+            className: 'row double',
+            components: [
+                'Photos'
+            ]
+        },
+        {
+            className: 'row',
+            components: [
+                '[map]',
+                'Notes',
+                '[player]'
+            ]
+        },
     ];
 
     constructor(props, context) {
@@ -31,7 +39,7 @@ class App extends React.Component {
 
         for (let i = 0; i < 30; i++) {
             photos.push(
-                {src: this.props.photoService.getRandomPhotoSrc(), alt: `default image ${i+1}`}
+                {src: this.props.photoService.getRandomPhotoSrc(), alt: `default image ${i + 1}`}
             )
         }
 
@@ -115,12 +123,12 @@ class App extends React.Component {
      */
     initComponent(componentName) {
         switch (componentName) {
-            case ('[Photos]'):
+            case ('Photos'):
                 return (
                     <Photos photos={this.state.photos} addPhoto={this.addPhoto} removePhoto={this.removePhoto}
                             setFocused={this.setFocused} photoService={this.props.photoService}/>
                 );
-            case ('[Notes]'):
+            case ('Notes'):
                 return (
                     <Notes setFocused={this.setFocused}/>
                 );
@@ -146,7 +154,7 @@ class App extends React.Component {
                 return (
                     <div className="note">
                         <h3 className="title">{element.title}</h3>
-                        <p className="content" dangerouslySetInnerHTML={{ __html: element.content}}/>
+                        <p className="content" dangerouslySetInnerHTML={{__html: element.content}}/>
                     </div>
                 );
             default:
@@ -158,8 +166,8 @@ class App extends React.Component {
         const content = (
             this.state.layout.map((row, index) => {
                 return (
-                    <div className="row" key={index}>
-                        {row.map((component, index) => {
+                    <div className={row.className} key={index}>
+                        {row.components.map((component, index) => {
                             return (
                                 <div className="box" key={index}>
                                     {this.initComponent(component)}
