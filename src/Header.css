@@ -5,22 +5,22 @@ header {
 }
 
 #header-back {
-    grid-column: 1 / 4;
+    grid-column: 1;
 }
 #header-title {
     grid-column: 4 / 10;
 }
 #header-favorite {
-    grid-column: 10 / 11;
+    grid-column: 11;
 }
 #header-menu {
-    grid-column: 11 / 12;
+    grid-column: 12;
 }
 
 .description {
-    grid-column: 5 / 6;
+    grid-column: 5 / 10;
 }
 
 .Users {
-    grid-column: 10 / 12;
+    grid-column: 10 / 13;
 }
