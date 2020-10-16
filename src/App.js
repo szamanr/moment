@@ -116,7 +116,7 @@ class App extends React.Component {
     }
 
     /**
-     * initialises a component based on its name. pass components as '[ComponentTag]'.
+     * initialises a component based on its name.
      *
      * @param componentName
      * @returns {*}
