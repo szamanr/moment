@@ -4,10 +4,14 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import PhotoService from './PhotoService.js';
+import NoteService from "./NoteService";
 
 ReactDOM.render(
   <React.StrictMode>
-    <App photoService={new PhotoService()} />
+    <App
+        photoService={new PhotoService()}
+        noteService={new NoteService()}
+    />
   </React.StrictMode>,
   document.getElementById('root')
 );

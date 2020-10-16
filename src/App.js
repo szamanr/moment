@@ -27,7 +27,7 @@ class App extends React.Component {
     constructor(props, context) {
         super(props, context);
 
-        this.state = {focusedElement: null, photos: [], layout: this.defaultLayout};
+        this.state = {focusedElement: null, photos: [], notes: [], layout: this.defaultLayout};
 
         this.setFocused = this.setFocused.bind(this);
         this.addPhoto = this.addPhoto.bind(this);
@@ -35,16 +35,12 @@ class App extends React.Component {
     }
 
     componentDidMount() {
-        const photos = [];
-
-        for (let i = 0; i < 30; i++) {
-            photos.push(
-                {src: this.props.photoService.getRandomPhotoSrc(), alt: `default image ${i + 1}`}
-            )
-        }
+        const photos = this.props.photoService.generate(30);
+        const notes = this.props.noteService.generate(20);
 
         this.setState({
-            photos: photos
+            photos: photos,
+            notes: notes,
         })
 
         // TODO: remove. this is just to test if the layout can be modified dynamically.
@@ -132,7 +128,7 @@ class App extends React.Component {
                 );
             case ('Notes'):
                 return (
-                    <Notes setFocused={this.setFocused}/>
+                    <Notes notes={this.state.notes} setFocused={this.setFocused}/>
                 );
             default:
                 return componentName;
