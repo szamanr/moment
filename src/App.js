@@ -186,7 +186,7 @@ class App extends React.Component {
                                  this.setFocused()
                              }}><span><FaTimes/></span></div>
                     </div>
-                    <div id="focused-element" className="row">
+                    <div id="focused-element" className={"row " + this.state.focusedElementType}>
                         {this.renderFocusedElement(this.state.focusedElement, this.state.focusedElementType)}
                     </div>
                 </main>
