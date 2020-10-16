@@ -48,7 +48,7 @@ class Photos extends React.Component {
     focusedPhoto = (id, e) => {
         e.preventDefault();
 
-        this.props.setFocused(e.target, id, 'photo');
+        this.props.setFocused(e.target, id, 'photos');
     }
 
     addPhotoElement = (

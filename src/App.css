@@ -83,7 +83,7 @@ footer {
     grid-row: 2 / 13;
 }
 
-#focused-element.photo {
+#focused-element.photos {
     place-items: center;
 }
 

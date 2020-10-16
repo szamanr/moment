@@ -28,7 +28,7 @@ class Notes extends React.Component {
         const notes = this.state.notes.map((note, index) => {
             return (
                 <li key={index} className="notes-item" onClick={() => {
-                    this.props.setFocused(note, index, 'note')
+                    this.props.setFocused(note, index, 'notes')
                 }}>
                     <span>{note.title}</span>
                 </li>

@@ -31,7 +31,7 @@ class App extends React.Component {
 
         this.setFocused = this.setFocused.bind(this);
         this.addPhoto = this.addPhoto.bind(this);
-        this.removeFocusedPhoto = this.removeFocusedPhoto.bind(this);
+        this.removeFocusedElement = this.removeFocusedElement.bind(this);
     }
 
     componentDidMount() {
@@ -91,27 +91,29 @@ class App extends React.Component {
     }
 
     /**
-     * removes a photo with given id
+     * removes an element with a given id from a given collection
      *
+     * @param collection
      * @param id
      */
-    removePhoto(id) {
+    remove(collection, id) {
         this.setState({
-            photos: this.state.photos.slice(0, id).concat(this.state.photos.slice(id + 1))
+            [collection]: this.state[collection].slice(0, id).concat(this.state[collection].slice(id + 1))
         });
     }
 
     /**
      * removes the focused photo from the list
      */
-    removeFocusedPhoto() {
+    removeFocusedElement() {
         const id = this.state.focusedElementId;
+        const collection = this.state.focusedElementType;
 
-        if (id === null) {
+        if (id === null || collection === null) {
             return;
         }
 
-        this.removePhoto(id);
+        this.remove(collection, id);
         this.setFocused();
     }
 
@@ -125,7 +127,7 @@ class App extends React.Component {
         switch (componentName) {
             case ('Photos'):
                 return (
-                    <Photos photos={this.state.photos} addPhoto={this.addPhoto} removePhoto={this.removePhoto}
+                    <Photos photos={this.state.photos} addPhoto={this.addPhoto} removePhoto={this.remove}
                             setFocused={this.setFocused} photoService={this.props.photoService}/>
                 );
             case ('Notes'):
@@ -146,11 +148,11 @@ class App extends React.Component {
      */
     renderFocusedElement(element, type) {
         switch (type) {
-            case 'photo':
+            case 'photos':
                 return (
                     <img className="photo" src={element.src} alt={element.alt}/>
                 );
-            case 'note':
+            case 'notes':
                 return (
                     <div className="note">
                         <h3 className="title">{element.title}</h3>
@@ -191,7 +193,7 @@ class App extends React.Component {
                     <div id="focused-buttons" className="row">
                         {/* TODO: remove notes */}
                         <div className="button danger" id="focused-element-remove"
-                             onClick={this.removeFocusedPhoto}><span><FaTrash/></span></div>
+                             onClick={this.removeFocusedElement}><span><FaTrash/></span></div>
                         <div className="button" id="focused-element-close"
                              onClick={() => {
                                  this.setFocused()
