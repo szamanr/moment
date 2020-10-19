@@ -23,16 +23,17 @@ footer {
 .App main {
     display: grid;
     height: 100%;
-    grid-template: repeat(12, 33%) / auto 1fr auto;
+    grid-template: repeat(auto-fit, calc(100% / 3)) / auto 1fr auto;
     overflow: auto;
 }
 
 .App .row {
-    grid-column: 1 / 4;
-    display: flex;
-    flex-wrap: wrap;
+    grid-column: 1 / span 3;
     justify-content: center;
     grid-row: span 1;
+
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 }
 
 .App .row.double {
@@ -40,8 +41,8 @@ footer {
 }
 
 .App .row .box {
+    min-height: 150px;
     max-height: 100%;
-    flex: 1 1 200px;
     margin: 5px;
     border: solid 1px;
     border-radius: 5px;
@@ -80,7 +81,7 @@ footer {
 
 #focused-element {
     display: grid;
-    grid-row: 2 / 13;
+    grid-row: 2 / span 11;
 }
 
 #focused-element.photos {
