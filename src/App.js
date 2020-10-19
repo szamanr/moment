@@ -187,7 +187,6 @@ class App extends React.Component {
             mainDiv = (
                 <main id="main" className="focused">
                     <div id="focused-buttons" className="row">
-                        {/* TODO: remove notes */}
                         <div className="button danger" id="focused-element-remove"
                              onClick={this.removeFocusedElement}><span><FaTrash/></span></div>
                         <div className="button" id="focused-element-close"
