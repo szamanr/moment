@@ -16,18 +16,18 @@ footer {
     grid-row: 12;
 }
 
-.App header, .App main, .App footer {
+header, main, footer {
     grid-column: 1 / 3;
 }
 
-.App main {
+main {
     display: grid;
     height: 100%;
     grid-template: repeat(auto-fit, calc(100% / 3)) / auto 1fr auto;
     overflow: auto;
 }
 
-.App .row {
+.row {
     grid-column: 1 / span 3;
     justify-content: center;
     grid-row: span 1;
@@ -36,11 +36,11 @@ footer {
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 }
 
-.App .row.double {
+.row.double {
     grid-row: span 2;
 }
 
-.App .row .box {
+.row .box {
     min-height: 150px;
     max-height: 100%;
     margin: 5px;
@@ -49,12 +49,12 @@ footer {
     overflow-y: auto;
 }
 
-.App .box, .App footer {
+.box, footer {
     display: grid;
     place-items: center;
 }
 
-.App main.focused {
+main.focused {
     grid-template-rows: repeat(12, 1fr);
     border: solid 1px;
     border-radius: 5px;
