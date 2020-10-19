@@ -11,7 +11,7 @@
     place-items: center;
 }
 
-#photo-add {
+.photos .photo-add {
     font-size: xx-large;
     width: 150px;
     height: 150px;

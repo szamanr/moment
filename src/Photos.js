@@ -52,7 +52,7 @@ class Photos extends React.Component {
     }
 
     addPhotoElement = (
-        <card id="photo-add" className="photo photo-add">
+        <card className="photo photo-add">
             <span className="button brand" onClick={this.addPhotoDialog}>
                 <FaPlus />
             </span>

@@ -1,4 +1,4 @@
-#notes {
+.notes {
     display: grid;
     grid-template: 1fr 1fr 1fr 1fr 1fr 1fr / auto;
     height: 100%;

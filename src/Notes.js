@@ -17,7 +17,7 @@ class Notes extends React.Component {
             );
         });
         return (
-            <ul id="notes">
+            <ul className="notes">
                 {notes}
             </ul>
         );
