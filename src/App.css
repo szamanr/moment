@@ -75,7 +75,7 @@ main.focused {
     grid-row: 2 / span 11;
 }
 
-#focused-element.photos {
+#focused-element.focused-photos {
     place-items: center;
 }
 
