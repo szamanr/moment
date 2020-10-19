@@ -7,16 +7,16 @@
     padding-left: 0;
 }
 
-.notes-item {
+.notes .note {
     display: grid;
     align-items: center;
     cursor: pointer;
 }
 
-.notes-item:nth-child(even) {
-    background-color: lightgray;
+.notes .note:nth-child(even) {
+    background-color: #d3d3d3;
 }
 
-.notes-item > span {
+.notes .note > span {
     padding: 0 5px;
 }

@@ -31,6 +31,7 @@ class App extends React.Component {
 
         this.setFocused = this.setFocused.bind(this);
         this.addPhoto = this.addPhoto.bind(this);
+        this.addNote = this.addNote.bind(this);
         this.removeFocusedElement = this.removeFocusedElement.bind(this);
     }
 
@@ -87,6 +88,17 @@ class App extends React.Component {
     }
 
     /**
+     * inserts a note
+     *
+     * @param note
+     */
+    addNote(note) {
+        this.setState({
+            notes: this.state.notes.concat(note)
+        });
+    }
+
+    /**
      * removes an element with a given id from a given collection
      *
      * @param collection
@@ -128,7 +140,8 @@ class App extends React.Component {
                 );
             case ('Notes'):
                 return (
-                    <Notes notes={this.state.notes} setFocused={this.setFocused}/>
+                    <Notes notes={this.state.notes} addNote={this.addNote} setFocused={this.setFocused}
+                    noteService={this.props.noteService} />
                 );
             default:
                 return componentName;
