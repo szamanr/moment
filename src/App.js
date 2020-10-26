@@ -33,8 +33,7 @@ class App extends React.Component {
         this.state = {focusedElement: null, photos: [], notes: [], layout: this.defaultLayout};
 
         this.setFocused = this.setFocused.bind(this);
-        this.addPhoto = this.addPhoto.bind(this);
-        this.addNote = this.addNote.bind(this);
+        this.add = this.add.bind(this);
         this.removeFocusedElement = this.removeFocusedElement.bind(this);
     }
 
@@ -90,23 +89,14 @@ class App extends React.Component {
     }
 
     /**
-     * inserts a photo
+     * inserts a given item into a given collection
      *
-     * @param photo
+     * @param collection
+     * @param item
      */
-    addPhoto(photo) {
-        const photoRef = this.db.child('photos').push();
-        photoRef.set(photo);
-    }
-
-    /**
-     * inserts a note
-     *
-     * @param note
-     */
-    addNote(note) {
-        const noteRef = this.db.child('notes').push();
-        noteRef.set(note);
+    add(collection, item) {
+        const ref = this.db.child(collection).push();
+        ref.set(item);
     }
 
     /**
@@ -144,12 +134,16 @@ class App extends React.Component {
         switch (componentName) {
             case ('Photos'):
                 return (
-                    <Photos photos={this.state.photos} addPhoto={this.addPhoto} removePhoto={this.remove}
+                    <Photos photos={this.state.photos} addPhoto={(photo) => {
+                        this.add('photos', photo)
+                    }} removePhoto={this.remove}
                             setFocused={this.setFocused} photoService={this.props.photoService}/>
                 );
             case ('Notes'):
                 return (
-                    <Notes notes={this.state.notes} addNote={this.addNote} setFocused={this.setFocused}
+                    <Notes notes={this.state.notes} addNote={(note) => {
+                        this.add('notes', note)
+                    }} setFocused={this.setFocused}
                            noteService={this.props.noteService}/>
                 );
             default:
