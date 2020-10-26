@@ -10,17 +10,23 @@ header {
 #header-title {
     grid-column: 4 / 10;
 }
-#header-favorite {
-    grid-column: 11;
+#header-buttons, .Users {
+    grid-column: 11 / 13;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    margin-right: 5px;
 }
-#header-menu {
-    grid-column: 12;
+
+#header-buttons .button {
+    margin: auto 5px;
 }
 
 .description {
-    grid-column: 5 / 10;
+    grid-column: 5 / 11;
+    width: 100%;
 }
 
-.Users {
-    grid-column: 10 / 13;
+.Users .user-icon {
+    margin: auto 2px;
 }
