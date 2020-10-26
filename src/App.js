@@ -39,22 +39,23 @@ class App extends React.Component {
     }
 
     componentDidMount() {
-        const photos = this.props.photoService.generate(30);
+        let photos = {};
+        this.db.child('photos').on('value', (snapshot) => {
+            photos = snapshot.val();
+
+            this.setState({
+                photos: photos,
+            });
+        });
 
         let notes = {};
-        let notesRef = this.db.child('notes');
-        notesRef.on('value', (snapshot) => {
+        this.db.child('notes').on('value', (snapshot) => {
             notes = snapshot.val();
 
             this.setState({
                 notes: notes,
             });
         });
-
-        this.setState({
-            photos: photos,
-            notes: notes,
-        })
 
         // TODO: remove. this is just to test if the layout can be modified dynamically.
         /*setTimeout(() => {
@@ -94,9 +95,8 @@ class App extends React.Component {
      * @param photo
      */
     addPhoto(photo) {
-        this.setState({
-            photos: this.state.photos.concat(photo)
-        });
+        const photoRef = this.db.child('photos').push();
+        photoRef.set(photo);
     }
 
     /**
@@ -116,13 +116,7 @@ class App extends React.Component {
      * @param id
      */
     remove(collection, id) {
-        if (collection === 'notes') {
-            this.db.child(collection + '/' + id).remove();
-            return;
-        }
-        this.setState({
-            [collection]: this.state[collection].slice(0, id).concat(this.state[collection].slice(id + 1))
-        });
+        this.db.child(collection + '/' + id).remove();
     }
 
     /**

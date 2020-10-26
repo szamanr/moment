@@ -60,11 +60,11 @@ class Photos extends React.Component {
     );
 
     render() {
-        let id = 0;
-        const photoElements = this.props.photos.map(photo => {
+        let photos = this.props.photos;
+        const photoElements = Object.keys(photos).map((id) => {
             return (
-                <card key={id} className="photo" onClick={this.focusedPhoto.bind(this, id++)}>
-                    <img src={photo.src} width={this.size.w} height={this.size.h} alt={photo.alt}/>
+                <card key={id} className="photo" onClick={this.focusedPhoto.bind(this, id)}>
+                    <img src={photos[id].src} width={this.size.w} height={this.size.h} alt={photos[id].alt}/>
                 </card>
             );
         });
