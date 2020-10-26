@@ -26,18 +26,19 @@ class Notes extends React.Component {
     );
 
     render() {
-        const notes = this.props.notes.map((note, index) => {
+        const notes = this.props.notes;
+        const notesElement = Object.keys(notes).map((index) => {
             return (
                 <li key={index} className="note" onClick={() => {
-                    this.props.setFocused(note, index, 'notes')
+                    this.props.setFocused(notes[index], index, 'notes')
                 }}>
-                    <span>{note.title}</span>
+                    <span>{notes[index].title}</span>
                 </li>
             );
         });
         return (
             <ul className="notes">
-                {notes}
+                {notesElement}
                 {this.addNoteElement}
             </ul>
         );

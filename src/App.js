@@ -5,6 +5,7 @@ import Notes from "./Notes";
 import Photos from "./Photos";
 import './global.css';
 import {FaTimes, FaTrash} from 'react-icons/fa';
+import firebase from "firebase";
 
 class App extends React.Component {
     defaultLayout = [
@@ -24,6 +25,8 @@ class App extends React.Component {
         },
     ];
 
+    db = firebase.database().ref('moments/00001');
+
     constructor(props, context) {
         super(props, context);
 
@@ -37,7 +40,16 @@ class App extends React.Component {
 
     componentDidMount() {
         const photos = this.props.photoService.generate(30);
-        const notes = this.props.noteService.generate(20);
+
+        let notes = {};
+        let notesRef = this.db.child('notes');
+        notesRef.on('value', (snapshot) => {
+            notes = snapshot.val();
+
+            this.setState({
+                notes: notes,
+            });
+        });
 
         this.setState({
             photos: photos,
@@ -93,9 +105,8 @@ class App extends React.Component {
      * @param note
      */
     addNote(note) {
-        this.setState({
-            notes: this.state.notes.concat(note)
-        });
+        const noteRef = this.db.child('notes').push();
+        noteRef.set(note);
     }
 
     /**
@@ -105,6 +116,10 @@ class App extends React.Component {
      * @param id
      */
     remove(collection, id) {
+        if (collection === 'notes') {
+            this.db.child(collection + '/' + id).remove();
+            return;
+        }
         this.setState({
             [collection]: this.state[collection].slice(0, id).concat(this.state[collection].slice(id + 1))
         });
@@ -141,7 +156,7 @@ class App extends React.Component {
             case ('Notes'):
                 return (
                     <Notes notes={this.state.notes} addNote={this.addNote} setFocused={this.setFocused}
-                    noteService={this.props.noteService} />
+                           noteService={this.props.noteService}/>
                 );
             default:
                 return componentName;
