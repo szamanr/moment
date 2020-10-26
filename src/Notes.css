@@ -14,7 +14,7 @@
 }
 
 .notes .note:nth-child(even) {
-    background-color: #d3d3d3;
+    background-color: #2b2b2b;
 }
 
 .notes .note > span {
