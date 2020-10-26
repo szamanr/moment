@@ -20,7 +20,7 @@ class Notes extends React.Component {
     addNoteElement = (
         <li key="new" onClick={this.addNote} className="note note-add">
             <span className="button brand">
-                <FaPlus />
+                <FaPlus/>
             </span>
         </li>
     );
