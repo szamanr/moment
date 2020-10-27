@@ -25,7 +25,9 @@ class App extends React.Component {
         },
     ];
 
-    db = firebase.database().ref('moments/00001');
+    momentId = '00001';
+    db = firebase.database().ref('moments/' + this.momentId);
+    storage = firebase.storage().ref(this.momentId);
 
     constructor(props, context) {
         super(props, context);
@@ -38,12 +40,19 @@ class App extends React.Component {
     }
 
     componentDidMount() {
-        let photos = {};
+        let photos = [];
         this.db.child('photos').on('value', (snapshot) => {
-            photos = snapshot.val();
+            snapshot.val().forEach((photo) => {
+                this.storage.child(photo.src).getDownloadURL().then((url) => {
+                    photos.push({
+                        alt: photo.alt,
+                        src: url,
+                    });
 
-            this.setState({
-                photos: photos,
+                    this.setState({
+                        photos: photos,
+                    });
+                });
             });
         });
 
