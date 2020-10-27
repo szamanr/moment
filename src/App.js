@@ -42,11 +42,12 @@ class App extends React.Component {
     componentDidMount() {
         let photos = [];
         this.db.child('photos').on('value', (snapshot) => {
-            snapshot.val().forEach((photo, id) => {
-                this.storage.child(photo.src).getDownloadURL().then((url) => {
+            const items = snapshot.val();
+            Object.keys(items).forEach((id) => {
+                this.storage.child(items[id].src).getDownloadURL().then((url) => {
                     photos.push({
                         id: id,
-                        alt: photo.alt,
+                        alt: items[id].alt,
                         src: url,
                     });
 
