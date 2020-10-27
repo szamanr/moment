@@ -52,20 +52,19 @@ class Photos extends React.Component {
     }
 
     addPhotoElement = (
-        <card className="photo photo-add">
+        <div className="photo photo-add">
             <span className="button brand" onClick={this.addPhotoDialog}>
                 <FaPlus/>
             </span>
-        </card>
+        </div>
     );
 
     render() {
-        let photos = this.props.photos;
-        const photoElements = Object.keys(photos).map((id) => {
+        const photoElements = this.props.photos.map((photo) => {
             return (
-                <card key={id} className="photo" onClick={this.focusedPhoto.bind(this, id)}>
-                    <img src={photos[id].src} width={this.size.w} height={this.size.h} alt={photos[id].alt}/>
-                </card>
+                <div key={photo.id} className="photo" onClick={this.focusedPhoto.bind(this, photo.id)}>
+                    <img src={photo.src} width={this.size.w} height={this.size.h} alt={photo.alt}/>
+                </div>
             );
         });
 
