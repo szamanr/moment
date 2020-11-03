@@ -121,6 +121,7 @@ class App extends React.Component {
     addPhoto(files) {
         for (const file of files) {
             const imageRef = this.storage.child(file.name);
+            // TODO: allow uploading same image multiple times
             imageRef.put(file).then(() => {
                 console.log(`file ${file.name} uploaded!`);
 
@@ -129,6 +130,7 @@ class App extends React.Component {
         }
     }
 
+    // TODO: remove images from storage
     /**
      * removes an element with a given id from a given collection
      *
@@ -137,6 +139,7 @@ class App extends React.Component {
      */
     remove(collection, id) {
         this.db.child(collection + '/' + id).remove();
+
     }
 
     /**
