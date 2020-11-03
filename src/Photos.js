@@ -8,25 +8,8 @@ class Photos extends React.Component {
     constructor(props) {
         super(props);
 
-        this.addPhotoDialog = this.addPhotoDialog.bind(this);
         this.removePhoto = this.removePhoto.bind(this);
     }
-
-    /**
-     * opens dialog for adding new photo
-     * TODO: for now just adds a dummy photo immediately
-     * @param e
-     */
-    addPhotoDialog = (e) => {
-        e.preventDefault();
-
-        const photoCount = this.props.photos.length;
-
-        const src = this.props.photoService.getRandomPhotoSrc();
-
-        const newPhoto = {src: src, alt: `image ${photoCount}`};
-        this.props.addPhoto(newPhoto);
-    };
 
     /**
      * removes an item from the list
@@ -51,7 +34,6 @@ class Photos extends React.Component {
         this.props.setFocused(e.target, id, 'photos');
     }
 
-    // TODO: image uploader styling
     addPhotoElement = (
         <div className="photo photo-add">
             <label htmlFor="photo-add" className="button brand">
