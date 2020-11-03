@@ -40,8 +40,8 @@ class App extends React.Component {
     }
 
     componentDidMount() {
-        let photos = [];
         this.db.child('photos').on('value', (snapshot) => {
+            let photos = [];
             const items = snapshot.val();
             Object.keys(items).forEach((id) => {
                 this.storage.child(items[id].src).getDownloadURL().then((url) => {
