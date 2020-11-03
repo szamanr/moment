@@ -114,13 +114,12 @@ class App extends React.Component {
     }
 
     /**
-     * uploads a photo to the storage and add it to db
+     * uploads a photo to the storage and adds it to db
      *
-     * @param imageFiles
-     * @param imageDataURLs
+     * @param files
      */
-    addPhoto(imageFiles, imageDataURLs) {
-        for (const file of imageFiles) {
+    addPhoto(files) {
+        for (const file of files) {
             const imageRef = this.storage.child(file.name);
             imageRef.put(file).then(() => {
                 console.log(`file ${file.name} uploaded!`);
