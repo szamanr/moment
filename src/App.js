@@ -36,14 +36,16 @@ class App extends React.Component {
 
         this.setFocused = this.setFocused.bind(this);
         this.add = this.add.bind(this);
+        this.addPhoto = this.addPhoto.bind(this);
         this.removeFocusedElement = this.removeFocusedElement.bind(this);
     }
 
     componentDidMount() {
-        this.db.child('photos').on('value', (snapshot) => {
+        this.db.child('photos').orderByChild('createdAt').on('value', (snapshot) => {
             let photos = [];
-            const items = snapshot.val();
+            const items = snapshot.val() ?? {};
             Object.keys(items).forEach((id) => {
+                // TODO: because this is async, photos aren't pushed in the correct order
                 this.storage.child(items[id].src).getDownloadURL().then((url) => {
                     photos.push({
                         id: id,
@@ -107,7 +109,25 @@ class App extends React.Component {
      */
     add(collection, item) {
         const ref = this.db.child(collection).push();
+        item.createdAt = firebase.database.ServerValue.TIMESTAMP;
         ref.set(item);
+    }
+
+    /**
+     * uploads a photo to the storage and add it to db
+     *
+     * @param imageFiles
+     * @param imageDataURLs
+     */
+    addPhoto(imageFiles, imageDataURLs) {
+        for (const file of imageFiles) {
+            const imageRef = this.storage.child(file.name);
+            imageRef.put(file).then(() => {
+                console.log(`file ${file.name} uploaded!`);
+
+                this.add('photos', {src: file.name, alt: file.name});
+            });
+        }
     }
 
     /**
@@ -145,9 +165,7 @@ class App extends React.Component {
         switch (componentName) {
             case ('Photos'):
                 return (
-                    <Photos photos={this.state.photos} addPhoto={(photo) => {
-                        this.add('photos', photo)
-                    }} removePhoto={this.remove}
+                    <Photos photos={this.state.photos} addPhoto={this.addPhoto} removePhoto={this.remove}
                             setFocused={this.setFocused} photoService={this.props.photoService}/>
                 );
             case ('Notes'):

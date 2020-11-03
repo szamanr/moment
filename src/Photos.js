@@ -1,6 +1,6 @@
 import React from "react";
 import './Photos.css';
-import {FaPlus} from 'react-icons/fa'
+import ImageUploader from "react-images-upload";
 
 class Photos extends React.Component {
     size = {w: "150px", h: "150px"};
@@ -51,11 +51,18 @@ class Photos extends React.Component {
         this.props.setFocused(e.target, id, 'photos');
     }
 
+    // TODO: image uploader styling
     addPhotoElement = (
         <div className="photo photo-add">
-            <span className="button brand" onClick={this.addPhotoDialog}>
-                <FaPlus/>
-            </span>
+            <ImageUploader
+                withIcon={true}
+                withLabel={false}
+                singleImage={true}
+                buttonText="+"
+                onChange={this.props.addPhoto}
+                imgExtension={[".jpg", ".gif", ".png", ".gif"]}
+                maxFileSize={5242880}
+            />
         </div>
     );
 
