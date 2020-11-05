@@ -45,13 +45,19 @@ class App extends React.Component {
             let photos = [];
             const items = snapshot.val() ?? {};
             Object.keys(items).forEach((id) => {
-                // TODO: because this is async, photos aren't pushed in the correct order
+                const index = photos.push({
+                    id: id,
+                    alt: items[id].alt,
+                    src: null,
+                });
+
+                this.setState({
+                    photos: photos,
+                });
+
+                // image url is fetched asynchronously and will be appended
                 this.storage.child(items[id].src).getDownloadURL().then((url) => {
-                    photos.push({
-                        id: id,
-                        alt: items[id].alt,
-                        src: url,
-                    });
+                    photos[index - 1].src = url;
 
                     this.setState({
                         photos: photos,
