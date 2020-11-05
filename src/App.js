@@ -147,6 +147,8 @@ class App extends React.Component {
     remove(collection, id) {
         const reference = this.db.child(collection + '/' + id);
 
+        // TODO: photo list isn't updated if last image removed
+
         if (collection === 'photos') {
             reference.once('value').then((snapshot) => {
                 const item = snapshot.val();
