@@ -32,7 +32,13 @@ class App extends React.Component {
     constructor(props, context) {
         super(props, context);
 
-        this.state = {focusedElement: null, photos: [], notes: [], layout: this.defaultLayout};
+        this.state = {
+            focusedElement: null,
+            photos: [],
+            notes: [],
+            layout: this.defaultLayout,
+            cachedPhotoUrls: {}
+        };
 
         this.setFocused = this.setFocused.bind(this);
         this.add = this.add.bind(this);
@@ -51,20 +57,34 @@ class App extends React.Component {
                     src: null,
                 });
 
-                // image url is fetched asynchronously and will be appended
-                this.storage.child(id).getDownloadURL().then((url) => {
-                    photos[index - 1].src = url;
+                // load photo from cache
+                if (this.state.cachedPhotoUrls[id]) {
+                    photos[index - 1].src = this.state.cachedPhotoUrls[id];
 
                     this.setState({
                         photos: photos,
                     });
-                }, (error) => {
-                    if (items[id].storage) {
-                        console.error(error);
-                    } else {
-                        // file is still being uploaded, download will try again
-                    }
-                });
+                } else {
+                    // if no cache, fetch photo
+                    this.storage.child(id).getDownloadURL().then((url) => {
+                        photos[index - 1].src = url;
+
+                        this.setState({
+                            photos: photos,
+                        });
+
+                        // cache it
+                        this.setState({
+                            cachedPhotoUrls: Object.assign({}, this.state.cachedPhotoUrls, {[id]: url})
+                        });
+                    }, (error) => {
+                        if (items[id].storage) {
+                            console.error(error);
+                        } else {
+                            // file is still being uploaded, download will try again
+                        }
+                    });
+                }
             });
 
             this.setState({

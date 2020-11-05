@@ -5,7 +5,7 @@ import {FaPlus} from "react-icons/fa";
 class Photos extends React.Component {
     size = {w: "150px", h: "150px"};
     defaultMetadata = {
-        cacheControl: 'public;max-age=300'
+        cacheControl: 'public, max-age=900, immutable'
     };
 
     constructor(props) {
