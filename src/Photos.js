@@ -4,6 +4,9 @@ import {FaPlus} from "react-icons/fa";
 
 class Photos extends React.Component {
     size = {w: "150px", h: "150px"};
+    defaultMetadata = {
+        cacheControl: 'public;max-age=300'
+    };
 
     constructor(props) {
         super(props);
@@ -41,8 +44,8 @@ class Photos extends React.Component {
             </label>
             <input id="photo-add" name="photo-add" type="file" hidden multiple={true}
                    onChange={(e) => {
-                this.props.addPhoto(e.target.files);
-            }}/>
+                       this.props.addPhoto(e.target.files, this.defaultMetadata);
+                   }}/>
         </div>
     );
 

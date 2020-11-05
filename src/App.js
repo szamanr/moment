@@ -52,14 +52,18 @@ class App extends React.Component {
                 });
 
                 // image url is fetched asynchronously and will be appended
-                this.storage.child(items[id].src).getDownloadURL().then((url) => {
+                this.storage.child(id).getDownloadURL().then((url) => {
                     photos[index - 1].src = url;
 
                     this.setState({
                         photos: photos,
                     });
                 }, (error) => {
-                    console.error(error.message);
+                    if (items[id].storage) {
+                        console.error(error);
+                    } else {
+                        // file is still being uploaded, download will try again
+                    }
                 });
             });
 
@@ -119,21 +123,27 @@ class App extends React.Component {
         const ref = this.db.child(collection).push();
         item.createdAt = firebase.database.ServerValue.TIMESTAMP;
         ref.set(item);
+
+        return ref;
     }
 
     /**
      * uploads a photo to the storage and adds it to db
      *
      * @param files
+     * @param metadata
      */
-    addPhoto(files) {
+    addPhoto(files, metadata = null) {
         for (const file of files) {
-            const imageRef = this.storage.child(file.name);
-            // TODO: allow uploading same image multiple times
-            imageRef.put(file).then(() => {
+            const ref = this.add('photos', {src: file.name, alt: file.name});
+
+            const imageRef = this.storage.child(ref.key);
+            imageRef.put(file, metadata).then(() => {
                 console.log(`file ${file.name} uploaded!`);
 
-                this.add('photos', {src: file.name, alt: file.name});
+                ref.update({
+                    storage: imageRef.fullPath
+                });
             });
         }
     }
@@ -150,7 +160,7 @@ class App extends React.Component {
         if (collection === 'photos') {
             reference.once('value').then((snapshot) => {
                 const item = snapshot.val();
-                this.storage.child(item.src).delete().then(() => {
+                this.storage.child(id).delete().then(() => {
                     console.log(`photo ${item.src} deleted from storage.`);
                 }, (error) => {
                     console.error(error.message);
