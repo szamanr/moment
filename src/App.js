@@ -62,6 +62,8 @@ class App extends React.Component {
                     this.setState({
                         photos: photos,
                     });
+                }, (error) => {
+                    console.error(error.message);
                 });
             });
         });
@@ -136,7 +138,6 @@ class App extends React.Component {
         }
     }
 
-    // TODO: remove images from storage
     /**
      * removes an element with a given id from a given collection
      *
@@ -144,8 +145,22 @@ class App extends React.Component {
      * @param id
      */
     remove(collection, id) {
-        this.db.child(collection + '/' + id).remove();
+        const reference = this.db.child(collection + '/' + id);
 
+        if (collection === 'photos') {
+            reference.once('value').then((snapshot) => {
+                const item = snapshot.val();
+                this.storage.child(item.src).delete().then(() => {
+                    console.log(`photo ${item.src} deleted from storage.`);
+                }, (error) => {
+                    console.error(error.message);
+                });
+            });
+        }
+
+        reference.remove().then(() => {
+            console.log('item removed from db.');
+        });
     }
 
     /**
