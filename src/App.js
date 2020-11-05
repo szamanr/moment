@@ -51,10 +51,6 @@ class App extends React.Component {
                     src: null,
                 });
 
-                this.setState({
-                    photos: photos,
-                });
-
                 // image url is fetched asynchronously and will be appended
                 this.storage.child(items[id].src).getDownloadURL().then((url) => {
                     photos[index - 1].src = url;
@@ -65,6 +61,10 @@ class App extends React.Component {
                 }, (error) => {
                     console.error(error.message);
                 });
+            });
+
+            this.setState({
+                photos: photos,
             });
         });
 
@@ -146,8 +146,6 @@ class App extends React.Component {
      */
     remove(collection, id) {
         const reference = this.db.child(collection + '/' + id);
-
-        // TODO: photo list isn't updated if last image removed
 
         if (collection === 'photos') {
             reference.once('value').then((snapshot) => {
