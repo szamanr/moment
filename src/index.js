@@ -6,6 +6,7 @@ import * as serviceWorker from './serviceWorker';
 import PhotoService from './PhotoService.js';
 import NoteService from "./NoteService";
 import firebase from "firebase";
+import {BrowserRouter} from "react-router-dom";
 
 firebase.initializeApp({
     apiKey: "AIzaSyD5IMuc6iK6KTGFQwbZAc7c7QkFGzZV1MQ",
@@ -19,10 +20,12 @@ firebase.initializeApp({
 
 ReactDOM.render(
     <React.StrictMode>
-        <App
-            photoService={new PhotoService()}
-            noteService={new NoteService()}
-        />
+        <BrowserRouter>
+            <App
+                photoService={new PhotoService()}
+                noteService={new NoteService()}
+            />
+        </BrowserRouter>
     </React.StrictMode>,
     document.getElementById('root')
 );

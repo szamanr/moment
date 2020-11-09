@@ -1,11 +1,14 @@
 import React from 'react';
 import './Header.css';
 import {FaCogs, FaLongArrowAltLeft, FaStar, FaUserCircle} from 'react-icons/fa'
+import {Link} from "react-router-dom";
 
 function Header() {
     return (
         <header className="Header">
-            <span className="button brand" id='header-back'><FaLongArrowAltLeft/></span>
+            <Link to="/">
+                <span className="button brand" id='header-back'><FaLongArrowAltLeft/></span>
+            </Link>
             <h3 id='header-title'>moment #001</h3>
             <div id="header-buttons">
                 <span className="button brand" id='header-favorite'><FaStar/></span>
