@@ -6,6 +6,7 @@ import Photos from "./Photos";
 import './global.css';
 import {FaTimes, FaTrash} from 'react-icons/fa';
 import firebase from "firebase";
+import {withRouter} from "react-router-dom";
 
 class Moment extends React.Component {
     defaultLayout = [
@@ -25,12 +26,16 @@ class Moment extends React.Component {
         },
     ];
 
-    momentId = '00001';
-    db = firebase.database().ref('moments/' + this.momentId);
-    storage = firebase.storage().ref(this.momentId);
+    momentId;
+    db;
+    storage;
 
     constructor(props, context) {
         super(props, context);
+
+        this.momentId = this.props.match.params.id;
+        this.db = firebase.database().ref('moments/' + this.momentId);
+        this.storage = firebase.storage().ref(this.momentId);
 
         this.state = {
             focusedElement: null,
@@ -301,7 +306,7 @@ class Moment extends React.Component {
 
         return (
             <div className="App">
-                <Header className="Header"/>
+                <Header className="Header" momentId={this.momentId}/>
                 {mainDiv}
                 <footer>
                     [footer]
@@ -311,4 +316,4 @@ class Moment extends React.Component {
     }
 }
 
-export default Moment;
+export default withRouter(Moment);
