@@ -131,6 +131,11 @@ class Moment extends React.Component {
         }, 3000)*/
     }
 
+    componentWillUnmount() {
+        this.db.child('photos').off('value');
+        this.db.child('notes').off('value');
+    }
+
     /**
      * sets the chosen element to be focused, i.e. displayed as the only element in the main view
      *
