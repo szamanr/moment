@@ -97,9 +97,17 @@ class Moment extends React.Component {
             });
         });
 
-        let notes = {};
         this.db.child('notes').on('value', (snapshot) => {
-            notes = snapshot.val();
+            let notes = [];
+            const items = snapshot.val() ?? {};
+
+            Object.keys(items).forEach((id) => {
+                notes.push({
+                    id: id,
+                    title: items[id].title,
+                    content: items[id].content,
+                });
+            });
 
             this.setState({
                 notes: notes,
