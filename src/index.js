@@ -3,8 +3,6 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import PhotoService from './PhotoService.js';
-import NoteService from "./NoteService";
 import firebase from "firebase";
 import {BrowserRouter} from "react-router-dom";
 
@@ -21,10 +19,7 @@ firebase.initializeApp({
 ReactDOM.render(
     <React.StrictMode>
         <BrowserRouter>
-            <App
-                photoService={new PhotoService()}
-                noteService={new NoteService()}
-            />
+            <App/>
         </BrowserRouter>
     </React.StrictMode>,
     document.getElementById('root')

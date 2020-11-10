@@ -1,5 +1,5 @@
 import React from "react";
-import {Link, Route} from "react-router-dom";
+import {Route} from "react-router-dom";
 import Moment from "./Moment";
 import Dashboard from "./Dashboard";
 import PhotoService from "./PhotoService";
