@@ -13,6 +13,8 @@ function App() {
     const signIn = function () {
         firebase.auth().signInWithEmailAndPassword('user1@mailinator.com', 'MomentMoment123#')
             .then(() => {
+                // TODO: when refreshing a page on moment, it redirects to dashboard. should only happen on home page.
+                // using "exact path" doesn't fix it.
                 history.push('/dashboard');
             });
     }
