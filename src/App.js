@@ -9,6 +9,7 @@ import * as firebase from "firebase";
 function App() {
     const history = useHistory();
 
+    // TODO: implement login
     const signIn = function () {
         firebase.auth().signInWithEmailAndPassword('user1@mailinator.com', 'MomentMoment123#')
             .then(() => {
