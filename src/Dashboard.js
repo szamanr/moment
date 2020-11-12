@@ -16,7 +16,6 @@ const Dashboard = function () {
             return;
         }
 
-        // TODO: keeps making POST calls to fetch the data. should only once
         const unsubscribe = db.where('users', 'array-contains', user.uid)
             .onSnapshot((snapshot) => {
                 let momentList = [];
@@ -36,7 +35,7 @@ const Dashboard = function () {
         return function cleanup() {
             unsubscribe();
         }
-    });
+    }, []);
 
     const momentLinks = moments.map(({id, title}) => (
         <li key={id}><Link to={"/moment/" + id}>{title}</Link></li>)
