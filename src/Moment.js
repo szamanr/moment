@@ -29,12 +29,13 @@ class Moment extends React.Component {
     momentId;
     db;
     storage;
+    subscriptions = [];
 
     constructor(props, context) {
         super(props, context);
 
         this.momentId = this.props.match.params.id;
-        this.db = firebase.database().ref('moments/' + this.momentId);
+        this.db = firebase.firestore().collection('moments').doc(this.momentId);
         this.storage = firebase.storage().ref(this.momentId);
 
         this.state = {
@@ -52,60 +53,64 @@ class Moment extends React.Component {
     }
 
     componentDidMount() {
-        this.db.child('photos').orderByChild('createdAt').on('value', (snapshot) => {
-            let photos = [];
-            const items = snapshot.val() ?? {};
-            Object.keys(items).forEach((id) => {
-                const index = photos.push({
-                    id: id,
-                    alt: items[id].alt,
-                    src: null,
-                });
+        const photosUnsubscribe = this.db.collection('photos').orderBy('createdAt')
+            .onSnapshot((snapshot) => {
+                let photos = [];
+                snapshot.forEach((documentSnapshot) => {
+                    const item = documentSnapshot.data();
+                    const id = documentSnapshot.id;
 
-                // load photo from cache
-                if (this.state.cachedPhotoUrls[id]) {
-                    photos[index - 1].src = this.state.cachedPhotoUrls[id];
-
-                    this.setState({
-                        photos: photos,
+                    const photosCount = photos.push({
+                        id,
+                        alt: item.alt,
+                        src: null,
                     });
-                } else {
-                    // if no cache, fetch photo
-                    this.storage.child(id).getDownloadURL().then((url) => {
-                        photos[index - 1].src = url;
+
+                    // load photo from cache
+                    if (this.state.cachedPhotoUrls[id]) {
+                        photos[photosCount - 1].src = this.state.cachedPhotoUrls[id];
 
                         this.setState({
                             photos: photos,
                         });
+                    } else {
+                        // if no cache, fetch photo
+                        this.storage.child(id).getDownloadURL().then((url) => {
+                            photos[photosCount - 1].src = url;
 
-                        // cache it
-                        this.setState({
-                            cachedPhotoUrls: Object.assign({}, this.state.cachedPhotoUrls, {[id]: url})
+                            this.setState({
+                                photos: photos,
+                            });
+
+                            // cache it
+                            this.setState({
+                                cachedPhotoUrls: Object.assign({}, this.state.cachedPhotoUrls, {[id]: url})
+                            });
+                        }, (error) => {
+                            if (item.storage) {
+                                console.error(error);
+                            } else {
+                                // file is still being uploaded, download will try again
+                            }
                         });
-                    }, (error) => {
-                        if (items[id].storage) {
-                            console.error(error);
-                        } else {
-                            // file is still being uploaded, download will try again
-                        }
-                    });
-                }
-            });
+                    }
+                });
 
-            this.setState({
-                photos: photos,
+                this.setState({
+                    photos: photos,
+                });
             });
-        });
+        this.subscriptions.push(photosUnsubscribe);
 
-        this.db.child('notes').on('value', (snapshot) => {
+        const notesUnsubscribe = this.db.collection('notes').onSnapshot((snapshot) => {
             let notes = [];
-            const items = snapshot.val() ?? {};
 
-            Object.keys(items).forEach((id) => {
+            snapshot.forEach((documentSnapshot) => {
+                const item = documentSnapshot.data();
                 notes.push({
-                    id: id,
-                    title: items[id].title,
-                    content: items[id].content,
+                    id: documentSnapshot.id,
+                    title: item.title,
+                    content: item.content,
                 });
             });
 
@@ -113,6 +118,7 @@ class Moment extends React.Component {
                 notes: notes,
             });
         });
+        this.subscriptions.push(notesUnsubscribe);
 
         // TODO: remove. this is just to test if the layout can be modified dynamically.
         /*setTimeout(() => {
@@ -132,8 +138,9 @@ class Moment extends React.Component {
     }
 
     componentWillUnmount() {
-        this.db.child('photos').off('value');
-        this.db.child('notes').off('value');
+        for (const unsubscribe of this.subscriptions) {
+            unsubscribe();
+        }
     }
 
     /**
@@ -158,9 +165,10 @@ class Moment extends React.Component {
      * @param item
      */
     add(collection, item) {
-        const ref = this.db.child(collection).push();
-        item.createdAt = firebase.database.ServerValue.TIMESTAMP;
-        ref.set(item);
+        const ref = this.db.collection(collection).doc();
+        ref.set(Object.assign(item, {
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        }));
 
         return ref;
     }
@@ -175,7 +183,7 @@ class Moment extends React.Component {
         for (const file of files) {
             const ref = this.add('photos', {src: file.name, alt: file.name});
 
-            const imageRef = this.storage.child(ref.key);
+            const imageRef = this.storage.child(ref.id);
             imageRef.put(file, metadata).then(() => {
                 console.log(`file ${file.name} uploaded!`);
 
