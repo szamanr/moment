@@ -1,30 +1,40 @@
-import {Link} from "react-router-dom";
-import React, {useEffect, useState} from "react";
+import {Link, useHistory} from "react-router-dom";
+import React, {useContext, useEffect, useState} from "react";
 import firebase from "firebase";
+import {UserContext} from "./providers/UserProvider";
 
 const Dashboard = function () {
-    const db = firebase.database().ref('moments');
+    const db = firebase.firestore().collection('moments');
     const [moments, setMoments] = useState([]);
+    const user = useContext(UserContext);
+    const history = useHistory();
 
     // fetch a list of moments
     useEffect(() => {
-        db.on('value', (snapshot) => {
-            let momentList = [];
-            const items = snapshot.val() ?? {};
+        if (!user) {
+            history.push('/');
+            return;
+        }
 
-            Object.keys(items).forEach((id) => {
-                let title = items[id].meta.title ?? 'moment ' + id;
-                momentList.push({
-                    id,
-                    title
+        // TODO: keeps making POST calls to fetch the data. should only once
+        const unsubscribe = db.where('users', 'array-contains', user.uid)
+            .onSnapshot((snapshot) => {
+                let momentList = [];
+
+                snapshot.forEach((documentSnapshot) => {
+                    const item = documentSnapshot.data();
+                    const title = item.title ?? 'moment ' + documentSnapshot.id
+                    momentList.push({
+                        id: documentSnapshot.id,
+                        title
+                    });
                 });
+
+                setMoments(momentList);
             });
 
-            setMoments(momentList);
-        });
-
         return function cleanup() {
-            db.off('value');
+            unsubscribe();
         }
     });
 

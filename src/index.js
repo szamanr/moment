@@ -5,6 +5,7 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 import firebase from "firebase";
 import {BrowserRouter} from "react-router-dom";
+import UserProvider from "./providers/UserProvider";
 
 firebase.initializeApp({
     apiKey: "AIzaSyD5IMuc6iK6KTGFQwbZAc7c7QkFGzZV1MQ",
@@ -19,7 +20,9 @@ firebase.initializeApp({
 ReactDOM.render(
     <React.StrictMode>
         <BrowserRouter>
-            <App/>
+            <UserProvider>
+                <App/>
+            </UserProvider>
         </BrowserRouter>
     </React.StrictMode>,
     document.getElementById('root')

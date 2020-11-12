@@ -6,7 +6,7 @@ import {Link} from "react-router-dom";
 function Header(props) {
     return (
         <header className="Header">
-            <Link to="/">
+            <Link to="/dashboard">
                 <span className="button brand" id='header-back'><FaLongArrowAltLeft/></span>
             </Link>
             <h3 id='header-title'>moment #{props.momentId}</h3>
