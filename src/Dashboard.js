@@ -35,7 +35,7 @@ const Dashboard = function () {
         return function cleanup() {
             unsubscribe();
         }
-    }, []);
+    }, [user]);
 
     const momentLinks = moments.map(({id, title}) => (
         <li key={id}><Link to={"/moment/" + id}>{title}</Link></li>)
