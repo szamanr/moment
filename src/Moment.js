@@ -89,7 +89,8 @@ function Moment(props) {
     // subscribe to notes
     // TODO: fix exhaustive-deps warning
     useEffect(() => {
-        const notesUnsubscribe = db.collection('notes').onSnapshot((snapshot) => {
+        const notesUnsubscribe = db.collection('notes').orderBy('createdAt')
+            .onSnapshot((snapshot) => {
             let items = [];
 
             snapshot.forEach((documentSnapshot) => {
