@@ -187,22 +187,26 @@ function Moment(props) {
      * @param id
      */
     const remove = function (collection, id) {
-        const reference = db.child(collection + '/' + id);
+        const reference = db.collection(collection).doc(id);
 
         if (collection === 'photos') {
-            reference.once('value').then((snapshot) => {
-                const item = snapshot.val();
+            reference.get().then((snapshot) => {
+                const item = snapshot.data();
                 storage.child(id).delete().then(() => {
                     console.log(`photo ${item.src} deleted from storage.`);
+
+                    reference.delete().then(() => {
+                        console.log('item removed from db.');
+                    });
                 }, (error) => {
                     console.error(error.message);
                 });
             });
+        } else {
+            reference.delete().then(() => {
+                console.log('item removed from db.');
+            });
         }
-
-        reference.remove().then(() => {
-            console.log('item removed from db.');
-        });
     }
 
     /**
