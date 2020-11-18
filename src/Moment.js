@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import './Moment.css';
 import Header from "./Header";
 import Notes from "./Notes";
@@ -8,8 +8,8 @@ import {FaTimes, FaTrash} from 'react-icons/fa';
 import firebase from "firebase";
 import {withRouter} from "react-router-dom";
 
-class Moment extends React.Component {
-    defaultLayout = [
+function Moment(props) {
+    const defaultLayout = [
         {
             className: 'row double',
             components: [
@@ -26,66 +26,48 @@ class Moment extends React.Component {
         },
     ];
 
-    momentId;
-    db;
-    storage;
-    subscriptions = [];
+    const momentId = props.match.params.id;
+    const db = firebase.firestore().collection('moments').doc(momentId);
+    const storage = firebase.storage().ref(momentId);
 
-    constructor(props, context) {
-        super(props, context);
+    const [focusedElement, setFocusedElement] = useState(null);
+    const [focusedElementId, setFocusedElementId] = useState(null);
+    const [focusedElementType, setFocusedElementType] = useState(null);
+    const [photos, setPhotos] = useState([]);
+    const [notes, setNotes] = useState([]);
+    const [layout, setLayout] = useState(defaultLayout);
+    const [cachedPhotoUrls, setCachedPhotoUrls] = useState({});
 
-        this.momentId = this.props.match.params.id;
-        this.db = firebase.firestore().collection('moments').doc(this.momentId);
-        this.storage = firebase.storage().ref(this.momentId);
-
-        this.state = {
-            focusedElement: null,
-            photos: [],
-            notes: [],
-            layout: this.defaultLayout,
-            cachedPhotoUrls: {}
-        };
-
-        this.setFocused = this.setFocused.bind(this);
-        this.add = this.add.bind(this);
-        this.addPhoto = this.addPhoto.bind(this);
-        this.removeFocusedElement = this.removeFocusedElement.bind(this);
-    }
-
-    componentDidMount() {
-        const photosUnsubscribe = this.db.collection('photos').orderBy('createdAt')
+    // subscribe to photos
+    // TODO: fix exhaustive-deps warning
+    useEffect(() => {
+        const photosUnsubscribe = db.collection('photos').orderBy('createdAt')
             .onSnapshot((snapshot) => {
-                let photos = [];
+                let items = [];
                 snapshot.forEach((documentSnapshot) => {
                     const item = documentSnapshot.data();
                     const id = documentSnapshot.id;
 
-                    const photosCount = photos.push({
+                    const photosCount = items.push({
                         id,
                         alt: item.alt,
                         src: null,
                     });
 
                     // load photo from cache
-                    if (this.state.cachedPhotoUrls[id]) {
-                        photos[photosCount - 1].src = this.state.cachedPhotoUrls[id];
+                    if (cachedPhotoUrls[id]) {
+                        items[photosCount - 1].src = cachedPhotoUrls[id];
 
-                        this.setState({
-                            photos: photos,
-                        });
+                        setPhotos(items);
                     } else {
                         // if no cache, fetch photo
-                        this.storage.child(id).getDownloadURL().then((url) => {
-                            photos[photosCount - 1].src = url;
+                        storage.child(id).getDownloadURL().then((url) => {
+                            items[photosCount - 1].src = url;
 
-                            this.setState({
-                                photos: photos,
-                            });
+                            setPhotos(items);
 
                             // cache it
-                            this.setState({
-                                cachedPhotoUrls: Object.assign({}, this.state.cachedPhotoUrls, {[id]: url})
-                            });
+                            setCachedPhotoUrls(Object.assign({}, cachedPhotoUrls, {[id]: url}));
                         }, (error) => {
                             if (item.storage) {
                                 console.error(error);
@@ -96,52 +78,58 @@ class Moment extends React.Component {
                     }
                 });
 
-                this.setState({
-                    photos: photos,
-                });
+                setPhotos(items);
             });
-        this.subscriptions.push(photosUnsubscribe);
 
-        const notesUnsubscribe = this.db.collection('notes').onSnapshot((snapshot) => {
-            let notes = [];
+        return function cleanup() {
+            photosUnsubscribe();
+        };
+    }, []);
+
+    // subscribe to notes
+    // TODO: fix exhaustive-deps warning
+    useEffect(() => {
+        const notesUnsubscribe = db.collection('notes').onSnapshot((snapshot) => {
+            let items = [];
 
             snapshot.forEach((documentSnapshot) => {
                 const item = documentSnapshot.data();
-                notes.push({
+                items.push({
                     id: documentSnapshot.id,
                     title: item.title,
                     content: item.content,
                 });
             });
 
-            this.setState({
-                notes: notes,
-            });
+            setNotes(items);
         });
-        this.subscriptions.push(notesUnsubscribe);
 
-        // TODO: remove. this is just to test if the layout can be modified dynamically.
-        /*setTimeout(() => {
-            this.setState({
-                layout: [
-                    [
-                        '[map]', '[notes]', '[player]'
-                    ],
-                    [
-                        '[Photos]'
-                    ]
-                ]
-            });
-
-            console.log('layout updated!');
-        }, 3000)*/
-    }
-
-    componentWillUnmount() {
-        for (const unsubscribe of this.subscriptions) {
-            unsubscribe();
+        return function cleanup() {
+            notesUnsubscribe();
         }
-    }
+    }, []);
+
+    // TODO: remove. this is just to test if the layout can be modified dynamically.
+    /*useEffect(() => {
+        setTimeout(() => {
+            setLayout([
+                {
+                    className: 'row',
+                    components: [
+                        '[map]',
+                        'Notes',
+                        '[player]'
+                    ]
+                },
+                {
+                    className: 'row double',
+                    components: [
+                        'Photos'
+                    ]
+                },
+            ]);
+        }, 5000);
+    });*/
 
     /**
      * sets the chosen element to be focused, i.e. displayed as the only element in the main view
@@ -150,12 +138,10 @@ class Moment extends React.Component {
      * @param id
      * @param type
      */
-    setFocused(element = null, id = null, type = null) {
-        this.setState({
-            focusedElement: element,
-            focusedElementId: id,
-            focusedElementType: type,
-        });
+    const setFocused = function (element = null, id = null, type = null) {
+        setFocusedElement(element);
+        setFocusedElementId(id);
+        setFocusedElementType(type);
     }
 
     /**
@@ -164,8 +150,8 @@ class Moment extends React.Component {
      * @param collection
      * @param item
      */
-    add(collection, item) {
-        const ref = this.db.collection(collection).doc();
+    const add = function (collection, item) {
+        const ref = db.collection(collection).doc();
         ref.set(Object.assign(item, {
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
         }));
@@ -179,11 +165,11 @@ class Moment extends React.Component {
      * @param files
      * @param metadata
      */
-    addPhoto(files, metadata = null) {
+    const addPhoto = function (files, metadata = null) {
         for (const file of files) {
-            const ref = this.add('photos', {src: file.name, alt: file.name});
+            const ref = add('photos', {src: file.name, alt: file.name});
 
-            const imageRef = this.storage.child(ref.id);
+            const imageRef = storage.child(ref.id);
             imageRef.put(file, metadata).then(() => {
                 console.log(`file ${file.name} uploaded!`);
 
@@ -200,13 +186,13 @@ class Moment extends React.Component {
      * @param collection
      * @param id
      */
-    remove(collection, id) {
-        const reference = this.db.child(collection + '/' + id);
+    const remove = function (collection, id) {
+        const reference = db.child(collection + '/' + id);
 
         if (collection === 'photos') {
             reference.once('value').then((snapshot) => {
                 const item = snapshot.val();
-                this.storage.child(id).delete().then(() => {
+                storage.child(id).delete().then(() => {
                     console.log(`photo ${item.src} deleted from storage.`);
                 }, (error) => {
                     console.error(error.message);
@@ -222,16 +208,13 @@ class Moment extends React.Component {
     /**
      * removes the focused photo from the list
      */
-    removeFocusedElement() {
-        const id = this.state.focusedElementId;
-        const collection = this.state.focusedElementType;
-
-        if (id === null || collection === null) {
+    const removeFocusedElement = function () {
+        if (focusedElementId === null || focusedElementType === null) {
             return;
         }
 
-        this.remove(collection, id);
-        this.setFocused();
+        remove(focusedElementType, focusedElementId);
+        setFocused();
     }
 
     /**
@@ -240,19 +223,19 @@ class Moment extends React.Component {
      * @param componentName
      * @returns {*}
      */
-    initComponent(componentName) {
+    const initComponent = function (componentName) {
         switch (componentName) {
             case ('Photos'):
                 return (
-                    <Photos photos={this.state.photos} addPhoto={this.addPhoto} removePhoto={this.remove}
-                            setFocused={this.setFocused} photoService={this.props.photoService}/>
+                    <Photos photos={photos} addPhoto={addPhoto} removePhoto={remove}
+                            setFocused={setFocused} photoService={props.photoService}/>
                 );
             case ('Notes'):
                 return (
-                    <Notes notes={this.state.notes} addNote={(note) => {
-                        this.add('notes', note)
-                    }} setFocused={this.setFocused}
-                           noteService={this.props.noteService}/>
+                    <Notes notes={notes} addNote={(note) => {
+                        add('notes', note)
+                    }} setFocused={setFocused}
+                           noteService={props.noteService}/>
                 );
             default:
                 return componentName;
@@ -266,7 +249,7 @@ class Moment extends React.Component {
      * @param type
      * @returns {*}
      */
-    renderFocusedElement(element, type) {
+    const renderFocusedElement = function (element, type) {
         switch (type) {
             case 'photos':
                 return (
@@ -284,57 +267,55 @@ class Moment extends React.Component {
         }
     }
 
-    render() {
-        const content = (
-            this.state.layout.map((row, index) => {
-                return (
-                    <div className={row.className} key={index}>
-                        {row.components.map((component, index) => {
-                            return (
-                                <div className="box" key={index}>
-                                    {this.initComponent(component)}
-                                </div>
-                            );
-                        })}
-                    </div>
-                );
-            })
-        );
+    const content = (
+        layout.map((row, index) => {
+            return (
+                <div className={row.className} key={index}>
+                    {row.components.map((component, index) => {
+                        return (
+                            <div className="box" key={index}>
+                                {initComponent(component)}
+                            </div>
+                        );
+                    })}
+                </div>
+            );
+        })
+    );
 
-        let mainDiv = (
-            <main id="main">
-                {content}
+    let mainDiv = (
+        <main id="main">
+            {content}
+        </main>
+    );
+
+    if (focusedElement) {
+        mainDiv = (
+            <main id="main" className="focused">
+                <div id="focused-buttons" className="row">
+                    <div className="button danger" id="focused-element-remove"
+                         onClick={removeFocusedElement}><span><FaTrash/></span></div>
+                    <div className="button" id="focused-element-close"
+                         onClick={() => {
+                             setFocused()
+                         }}><span><FaTimes/></span></div>
+                </div>
+                <div id="focused-element" className={"row focused-" + focusedElementType}>
+                    {renderFocusedElement(focusedElement, focusedElementType)}
+                </div>
             </main>
         );
-
-        if (this.state.focusedElement) {
-            mainDiv = (
-                <main id="main" className="focused">
-                    <div id="focused-buttons" className="row">
-                        <div className="button danger" id="focused-element-remove"
-                             onClick={this.removeFocusedElement}><span><FaTrash/></span></div>
-                        <div className="button" id="focused-element-close"
-                             onClick={() => {
-                                 this.setFocused()
-                             }}><span><FaTimes/></span></div>
-                    </div>
-                    <div id="focused-element" className={"row focused-" + this.state.focusedElementType}>
-                        {this.renderFocusedElement(this.state.focusedElement, this.state.focusedElementType)}
-                    </div>
-                </main>
-            );
-        }
-
-        return (
-            <div className="App">
-                <Header className="Header" momentId={this.momentId}/>
-                {mainDiv}
-                <footer>
-                    [footer]
-                </footer>
-            </div>
-        );
     }
+
+    return (
+        <div className="App">
+            <Header className="Header" momentId={momentId}/>
+            {mainDiv}
+            <footer>
+                [footer]
+            </footer>
+        </div>
+    );
 }
 
 export default withRouter(Moment);
