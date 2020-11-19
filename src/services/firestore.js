@@ -33,6 +33,19 @@ export const authenticateAnonymously = () => {
 };
 
 /**
+ * subscribes to the moments collection for a given user
+ *
+ * @param user
+ * @param observer
+ * @returns An unsubscribe function that can be called to cancel the snapshot listener.
+ */
+export const streamMoments = (user, observer) => {
+    return db.collection('moments')
+        .where('users', 'array-contains', user.uid)
+        .onSnapshot(observer);
+};
+
+/**
  * subscribe to the photos collection for a given Moment
  *
  * @param momentId

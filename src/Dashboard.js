@@ -1,10 +1,9 @@
 import {Link, useHistory} from "react-router-dom";
 import React, {useContext, useEffect, useState} from "react";
-import firebase from "firebase";
 import {UserContext} from "./providers/UserProvider";
+import * as FirestoreService from "./services/firestore";
 
 const Dashboard = function () {
-    const db = firebase.firestore().collection('moments');
     const [moments, setMoments] = useState([]);
     const user = useContext(UserContext);
     const history = useHistory();
@@ -16,26 +15,25 @@ const Dashboard = function () {
             return;
         }
 
-        const unsubscribe = db.where('users', 'array-contains', user.uid)
-            .onSnapshot((snapshot) => {
-                let momentList = [];
+        const unsubscribe = FirestoreService.streamMoments(user, (snapshot) => {
+            let momentList = [];
 
-                snapshot.forEach((documentSnapshot) => {
-                    const item = documentSnapshot.data();
-                    const title = item.title ?? 'moment ' + documentSnapshot.id
-                    momentList.push({
-                        id: documentSnapshot.id,
-                        title
-                    });
+            snapshot.forEach((documentSnapshot) => {
+                const item = documentSnapshot.data();
+                const title = item.title ?? 'moment ' + documentSnapshot.id
+                momentList.push({
+                    id: documentSnapshot.id,
+                    title
                 });
-
-                setMoments(momentList);
             });
+
+            setMoments(momentList);
+        });
 
         return function cleanup() {
             unsubscribe();
         }
-    }, [user]);
+    }, [user, history]);
 
     const momentLinks = moments.map(({id, title}) => (
         <li key={id}><Link to={"/moment/" + id}>{title}</Link></li>)
