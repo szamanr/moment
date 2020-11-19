@@ -5,8 +5,8 @@ import Notes from "./Notes";
 import Photos from "./Photos";
 import './global.css';
 import {FaTimes, FaTrash} from 'react-icons/fa';
-import firebase from "firebase";
 import {withRouter} from "react-router-dom";
+import * as FirestoreService from "./services/firestore";
 
 function Moment(props) {
     const defaultLayout = [
@@ -27,8 +27,6 @@ function Moment(props) {
     ];
 
     const momentId = props.match.params.id;
-    const db = firebase.firestore().collection('moments').doc(momentId);
-    const storage = firebase.storage().ref(momentId);
 
     const [focusedElement, setFocusedElement] = useState(null);
     const [focusedElementId, setFocusedElementId] = useState(null);
@@ -39,58 +37,54 @@ function Moment(props) {
     const [cachedPhotoUrls, setCachedPhotoUrls] = useState({});
 
     // subscribe to photos
-    // TODO: fix exhaustive-deps warning
     useEffect(() => {
-        const photosUnsubscribe = db.collection('photos').orderBy('createdAt')
-            .onSnapshot((snapshot) => {
-                let items = [];
-                snapshot.forEach((documentSnapshot) => {
-                    const item = documentSnapshot.data();
-                    const id = documentSnapshot.id;
+        const photosUnsubscribe = FirestoreService.streamPhotos(momentId, (snapshot) => {
+            let items = [];
+            snapshot.forEach((documentSnapshot) => {
+                const item = documentSnapshot.data();
+                const id = documentSnapshot.id;
 
-                    const photosCount = items.push({
-                        id,
-                        alt: item.alt,
-                        src: null,
-                    });
-
-                    // load photo from cache
-                    if (cachedPhotoUrls[id]) {
-                        items[photosCount - 1].src = cachedPhotoUrls[id];
-
-                        setPhotos(items);
-                    } else {
-                        // if no cache, fetch photo
-                        storage.child(id).getDownloadURL().then((url) => {
-                            items[photosCount - 1].src = url;
-
-                            setPhotos(items);
-
-                            // cache it
-                            setCachedPhotoUrls(Object.assign({}, cachedPhotoUrls, {[id]: url}));
-                        }, (error) => {
-                            if (item.storage) {
-                                console.error(error);
-                            } else {
-                                // file is still being uploaded, download will try again
-                            }
-                        });
-                    }
+                const photosCount = items.push({
+                    id,
+                    alt: item.alt,
+                    src: null,
                 });
 
-                setPhotos(items);
+                // load photo from cache
+                if (cachedPhotoUrls[id]) {
+                    items[photosCount - 1].src = cachedPhotoUrls[id];
+
+                    setPhotos(items);
+                } else {
+                    // if no cache, fetch photo
+                    FirestoreService.getStorageItem(momentId, id).then((url) => {
+                        items[photosCount - 1].src = url;
+
+                        setPhotos(items);
+
+                        // cache it
+                        setCachedPhotoUrls(Object.assign({}, cachedPhotoUrls, {[id]: url}));
+                    }, (error) => {
+                        if (item.storage) {
+                            console.error(error);
+                        } else {
+                            // file is still being uploaded, download will try again
+                        }
+                    });
+                }
             });
+
+            setPhotos(items);
+        });
 
         return function cleanup() {
             photosUnsubscribe();
         };
-    }, []);
+    }, [momentId]);
 
     // subscribe to notes
-    // TODO: fix exhaustive-deps warning
     useEffect(() => {
-        const notesUnsubscribe = db.collection('notes').orderBy('createdAt')
-            .onSnapshot((snapshot) => {
+        const notesUnsubscribe = FirestoreService.streamNotes(momentId, (snapshot) => {
             let items = [];
 
             snapshot.forEach((documentSnapshot) => {
@@ -108,7 +102,7 @@ function Moment(props) {
         return function cleanup() {
             notesUnsubscribe();
         }
-    }, []);
+    }, [momentId]);
 
     // TODO: remove. this is just to test if the layout can be modified dynamically.
     /*useEffect(() => {
@@ -146,21 +140,6 @@ function Moment(props) {
     }
 
     /**
-     * inserts a given item into a given collection
-     *
-     * @param collection
-     * @param item
-     */
-    const add = function (collection, item) {
-        const ref = db.collection(collection).doc();
-        ref.set(Object.assign(item, {
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        }));
-
-        return ref;
-    }
-
-    /**
      * uploads a photo to the storage and adds it to db
      *
      * @param files
@@ -168,16 +147,14 @@ function Moment(props) {
      */
     const addPhoto = function (files, metadata = null) {
         for (const file of files) {
-            const ref = add('photos', {src: file.name, alt: file.name});
+            const ref = FirestoreService.add(momentId, 'photos', {src: file.name, alt: file.name});
 
-            const imageRef = storage.child(ref.id);
-            imageRef.put(file, metadata).then(() => {
-                console.log(`file ${file.name} uploaded!`);
-
-                ref.update({
-                    storage: imageRef.fullPath
+            FirestoreService.upload(momentId, ref.id, file, metadata)
+                .then((imageRef) => {
+                    ref.update({
+                        storage: imageRef.fullPath
+                    });
                 });
-            });
         }
     }
 
@@ -188,26 +165,15 @@ function Moment(props) {
      * @param id
      */
     const remove = function (collection, id) {
-        const reference = db.collection(collection).doc(id);
-
         if (collection === 'photos') {
-            reference.get().then((snapshot) => {
-                const item = snapshot.data();
-                storage.child(id).delete().then(() => {
-                    console.log(`photo ${item.src} deleted from storage.`);
-
-                    reference.delete().then(() => {
-                        console.log('item removed from db.');
-                    });
-                }, (error) => {
-                    console.error(error.message);
-                });
-            });
-        } else {
-            reference.delete().then(() => {
-                console.log('item removed from db.');
+            FirestoreService.removeFromStorage(momentId, id).then(() => {
+                console.log('photo deleted from storage.');
             });
         }
+
+        FirestoreService.remove(momentId, collection, id).then(() => {
+            console.log('item removed from db.');
+        });
     }
 
     /**
@@ -238,7 +204,7 @@ function Moment(props) {
             case ('Notes'):
                 return (
                     <Notes notes={notes} addNote={(note) => {
-                        add('notes', note)
+                        FirestoreService.add(momentId, 'notes', note)
                     }} setFocused={setFocused}
                            noteService={props.noteService}/>
                 );

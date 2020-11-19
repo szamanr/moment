@@ -4,14 +4,14 @@ import Moment from "./Moment";
 import Dashboard from "./Dashboard";
 import PhotoService from "./PhotoService";
 import NoteService from "./NoteService";
-import * as firebase from "firebase";
+import * as FirestoreService from "./services/firestore";
 
 function App() {
     const history = useHistory();
 
     // TODO: implement login
     const signIn = function () {
-        firebase.auth().signInWithEmailAndPassword('user1@mailinator.com', 'MomentMoment123#')
+        FirestoreService.authenticate()
             .then(() => {
                 // TODO: when refreshing a page on moment, it redirects to dashboard. should only happen on home page.
                 // using "exact path" doesn't fix it.
