@@ -26,6 +26,7 @@ function Moment(props) {
         },
     ];
 
+    // TODO: use custom hook?
     const momentId = props.match.params.id;
 
     const [focusedElement, setFocusedElement] = useState(null);
@@ -37,6 +38,7 @@ function Moment(props) {
     const [cachedPhotoUrls, setCachedPhotoUrls] = useState({});
 
     // subscribe to photos
+    // TODO: resolve cachedPhotoUrls dependency - causes the photo list to reload multiple times and leaves 1 photo
     useEffect(() => {
         const photosUnsubscribe = FirestoreService.streamPhotos(momentId, (snapshot) => {
             let items = [];
