@@ -1,12 +1,12 @@
 import Faker from 'faker';
 
-class NoteService {
+class NoteProvider {
     /**
      * creates a dummy note with random title and content
      *
      * @returns {{title: *, content: *}}
      */
-    getRandomNote() {
+    static getRandomNote() {
         return {
             title: Faker.lorem.words(),
             content: Faker.lorem.sentences(10),
@@ -23,11 +23,11 @@ class NoteService {
         let notes = [];
 
         for(let i = 0; i < count; i++) {
-            notes.push(this.getRandomNote());
+            notes.push(NoteProvider.getRandomNote());
         }
 
         return notes;
     }
 }
 
-export default NoteService;
+export default NoteProvider;

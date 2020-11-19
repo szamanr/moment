@@ -201,14 +201,13 @@ function Moment(props) {
             case ('Photos'):
                 return (
                     <Photos photos={photos} addPhoto={addPhoto} removePhoto={remove}
-                            setFocused={setFocused} photoService={props.photoService}/>
+                            setFocused={setFocused}/>
                 );
             case ('Notes'):
                 return (
                     <Notes notes={notes} addNote={(note) => {
                         FirestoreService.add(momentId, 'notes', note)
-                    }} setFocused={setFocused}
-                           noteService={props.noteService}/>
+                    }} setFocused={setFocused}/>
                 );
             default:
                 return componentName;

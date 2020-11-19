@@ -1,10 +1,10 @@
-class PhotoService {
+class PhotoProvider {
     /**
      * returns a random photo from pre-defined list
      *
      * @returns {string}
      */
-    getRandomPhotoSrc() {
+    static getRandomPhotoSrc() {
         const photos = ["react.png", "6lm10a.png", "angular.png", "banana.jpg", "bedraggled.jpg", "cudgel.jpg", "dog-mask.jpg", "hal-cropped.jpg", "laravel.png", "trip01.png", "trip02.png", "trip03.png"];
         const photoId = Math.floor(Math.random() * photos.length);
         return photos[photoId];
@@ -21,11 +21,11 @@ class PhotoService {
 
         for (let i = 0; i < count; i++) {
             photos.push(
-                {src: this.getRandomPhotoSrc(), alt: `default image ${i + 1}`}
+                {src: PhotoProvider.getRandomPhotoSrc(), alt: `default image ${i + 1}`}
             )
         }
         return photos;
     }
 }
 
-export default PhotoService;
+export default PhotoProvider;

@@ -2,8 +2,6 @@ import React from "react";
 import {Route, useHistory} from "react-router-dom";
 import Moment from "./Moment";
 import Dashboard from "./Dashboard";
-import PhotoService from "./PhotoService";
-import NoteService from "./NoteService";
 import * as FirestoreService from "./services/firestore";
 
 function App() {
@@ -24,10 +22,7 @@ function App() {
             <div>
                 <Route exact path="/dashboard" component={Dashboard}/>
                 <Route path="/moment/:id">
-                    <Moment
-                        photoService={new PhotoService()}
-                        noteService={new NoteService()}
-                    />
+                    <Moment/>
                 </Route>
                 <Route path="/">
                     {signIn()}

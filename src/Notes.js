@@ -1,6 +1,7 @@
 import React from "react";
 import "./Notes.css";
 import {FaPlus} from "react-icons/fa";
+import NoteProvider from "./providers/NoteProvider";
 
 function Notes(props) {
 
@@ -8,7 +9,7 @@ function Notes(props) {
      * adds a new dummy note
      */
     const addNote = () => {
-        const note = props.noteService.getRandomNote();
+        const note = NoteProvider.getRandomNote();
         props.addNote(note);
     }
 
