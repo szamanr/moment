@@ -46,6 +46,7 @@ function Moment(props) {
     }, []);
 
     // subscribe to photos
+    // TODO: issues with infinite call loop between photo subscribe and image storage fetch
     useEffect(() => {
         const photosUnsubscribe = FirestoreService.streamPhotos(momentId, (snapshot) => {
             const items = snapshot.docs.map((documentSnapshot) => {
