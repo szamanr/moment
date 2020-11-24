@@ -37,43 +37,44 @@ function Moment(props) {
     const [layout, setLayout] = useState(defaultLayout);
     const [cachedPhotoUrls, setCachedPhotoUrls] = useState({});
 
-    // subscribe to photos
+    const getPhotoSrc = (id, item) => {
+        // load photo from cache
+        if (cachedPhotoUrls[id]) {
+            return cachedPhotoUrls[id];
+        }
+
+        // if no cache, fetch photo
+        FirestoreService.getStorageItem(momentId, id).then((url) => {
+            // cache it
+            setCachedPhotoUrls(Object.assign({}, cachedPhotoUrls, {[id]: url}));
+
+            return url;
+        }, (error) => {
+            if (item.storage) {
+                console.error(error);
+            } else {
+                // file is still being uploaded, download will try again
+            }
+
+            return null;
+        });
+
+    };
+
     // TODO: resolve cachedPhotoUrls dependency - causes the photo list to reload multiple times and leaves 1 photo
     useEffect(() => {
         const photosUnsubscribe = FirestoreService.streamPhotos(momentId, (snapshot) => {
-            let items = [];
-            snapshot.forEach((documentSnapshot) => {
+            const items = snapshot.docs.map((documentSnapshot) => {
                 const item = documentSnapshot.data();
                 const id = documentSnapshot.id;
+                // TODO src is returned async, so photos are not visible since src = null at render
+                const src = getPhotoSrc(id, item);
 
-                const photosCount = items.push({
+                return {
                     id,
                     alt: item.alt,
-                    src: null,
-                });
-
-                // load photo from cache
-                if (cachedPhotoUrls[id]) {
-                    items[photosCount - 1].src = cachedPhotoUrls[id];
-
-                    setPhotos(items);
-                } else {
-                    // if no cache, fetch photo
-                    FirestoreService.getStorageItem(momentId, id).then((url) => {
-                        items[photosCount - 1].src = url;
-
-                        setPhotos(items);
-
-                        // cache it
-                        setCachedPhotoUrls(Object.assign({}, cachedPhotoUrls, {[id]: url}));
-                    }, (error) => {
-                        if (item.storage) {
-                            console.error(error);
-                        } else {
-                            // file is still being uploaded, download will try again
-                        }
-                    });
-                }
+                    src: src,
+                };
             });
 
             setPhotos(items);
