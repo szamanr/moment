@@ -49,10 +49,11 @@ function Moment(props) {
     useEffect(() => {
         const photosUnsubscribe = FirestoreService.streamPhotos(momentId, (snapshot) => {
             const items = snapshot.docs.map((documentSnapshot) => {
+                const id = documentSnapshot.id;
                 return {
-                    id: documentSnapshot.id,
+                    id: id,
                     alt: documentSnapshot.data().alt,
-                    src: null,
+                    src: cachedPhotoUrls[id] ?? null,
                 };
             });
 
@@ -62,10 +63,9 @@ function Moment(props) {
         return function cleanup() {
             photosUnsubscribe();
         };
-    }, [momentId]);
+    }, [momentId, cachedPhotoUrls]);
 
     // update images from cache
-    // TODO: after photo removed, all image srcs become null for some reason
     useEffect(() => {
         for (const photo of photos) {
             const src = cachedPhotoUrls[photo.id] ?? null;
