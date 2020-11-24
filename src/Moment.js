@@ -65,19 +65,8 @@ function Moment(props) {
         };
     }, [momentId, cachedPhotoUrls]);
 
-    // update images from cache
-    useEffect(() => {
-        for (const photo of photos) {
-            const src = cachedPhotoUrls[photo.id] ?? null;
-            if (src) {
-                photo.src = src;
-            }
-        }
-
-        setPhotos(photos);
-    }, [cachedPhotoUrls, photos]);
-
     // fetch images from storage
+    // TODO: after image added, 12 requests are sent. check why so many.
     useEffect(() => {
         for (const photo of photos) {
             if (!cachedPhotoUrls[photo.id]) {
