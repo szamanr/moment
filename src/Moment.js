@@ -66,7 +66,6 @@ function Moment(props) {
 
     // update images from cache
     // TODO: after photo removed, all image srcs become null for some reason
-    // TODO: error after adding new photo
     useEffect(() => {
         for (const photo of photos) {
             const src = cachedPhotoUrls[photo.id] ?? null;
@@ -74,6 +73,7 @@ function Moment(props) {
                 photo.src = src;
             }
         }
+
         setPhotos(photos);
     }, [cachedPhotoUrls, photos]);
 
@@ -87,6 +87,15 @@ function Moment(props) {
                         if (isMountedRef.current) {
                             setCachedPhotoUrls(Object.assign({}, cachedPhotoUrls, {[photo.id]: url}));
                         }
+                    }, (error) => {
+                        if (photo.src) {
+                            // file could not be downloaded
+                            console.error(error);
+                        } else {
+                            // file is still being uploaded, download will try again
+                        }
+
+                        return null;
                     });
             }
         }
