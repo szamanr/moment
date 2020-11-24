@@ -38,9 +38,11 @@ function Moment(props) {
     const [cachedPhotoUrls, setCachedPhotoUrls] = useState({});
 
     // mark component as mounted so we don't set any states after unmount
-    const isMountedRef = useRef(true)
-    useEffect(() => () => {
-        isMountedRef.current = false
+    const isMountedRef = useRef(true);
+    useEffect(() => {
+        return function whenUnmounted() {
+            isMountedRef.current = false;
+        }
     }, []);
 
     // subscribe to photos
@@ -63,6 +65,8 @@ function Moment(props) {
     }, [momentId]);
 
     // update images from cache
+    // TODO: after photo removed, all image srcs become null for some reason
+    // TODO: error after adding new photo
     useEffect(() => {
         for (const photo of photos) {
             const src = cachedPhotoUrls[photo.id] ?? null;
