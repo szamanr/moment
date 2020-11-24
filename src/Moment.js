@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import './Moment.css';
 import Header from "./Header";
 import Notes from "./Notes";
@@ -37,43 +37,20 @@ function Moment(props) {
     const [layout, setLayout] = useState(defaultLayout);
     const [cachedPhotoUrls, setCachedPhotoUrls] = useState({});
 
-    const getPhotoSrc = (id, item) => {
-        // load photo from cache
-        if (cachedPhotoUrls[id]) {
-            return cachedPhotoUrls[id];
-        }
+    // mark component as mounted so we don't set any states after unmount
+    const isMountedRef = useRef(true)
+    useEffect(() => () => {
+        isMountedRef.current = false
+    }, []);
 
-        // if no cache, fetch photo
-        FirestoreService.getStorageItem(momentId, id).then((url) => {
-            // cache it
-            setCachedPhotoUrls(Object.assign({}, cachedPhotoUrls, {[id]: url}));
-
-            return url;
-        }, (error) => {
-            if (item.storage) {
-                console.error(error);
-            } else {
-                // file is still being uploaded, download will try again
-            }
-
-            return null;
-        });
-
-    };
-
-    // TODO: resolve cachedPhotoUrls dependency - causes the photo list to reload multiple times and leaves 1 photo
+    // subscribe to photos
     useEffect(() => {
         const photosUnsubscribe = FirestoreService.streamPhotos(momentId, (snapshot) => {
             const items = snapshot.docs.map((documentSnapshot) => {
-                const item = documentSnapshot.data();
-                const id = documentSnapshot.id;
-                // TODO src is returned async, so photos are not visible since src = null at render
-                const src = getPhotoSrc(id, item);
-
                 return {
-                    id,
-                    alt: item.alt,
-                    src: src,
+                    id: documentSnapshot.id,
+                    alt: documentSnapshot.data().alt,
+                    src: null,
                 };
             });
 
@@ -84,6 +61,32 @@ function Moment(props) {
             photosUnsubscribe();
         };
     }, [momentId]);
+
+    // update images from cache
+    useEffect(() => {
+        for (const photo of photos) {
+            const src = cachedPhotoUrls[photo.id] ?? null;
+            if (src) {
+                photo.src = src;
+            }
+        }
+        setPhotos(photos);
+    }, [cachedPhotoUrls, photos]);
+
+    // fetch images from storage
+    useEffect(() => {
+        for (const photo of photos) {
+            if (!cachedPhotoUrls[photo.id]) {
+                FirestoreService.getStorageItem(momentId, photo.id)
+                    .then((url) => {
+                        // cache it
+                        if (isMountedRef.current) {
+                            setCachedPhotoUrls(Object.assign({}, cachedPhotoUrls, {[photo.id]: url}));
+                        }
+                    });
+            }
+        }
+    }, [momentId, cachedPhotoUrls, photos]);
 
     // subscribe to notes
     useEffect(() => {
