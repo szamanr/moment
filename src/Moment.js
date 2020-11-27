@@ -33,7 +33,7 @@ function Moment(props) {
     const [focusedElement, setFocusedElement] = useState(null);
     const [focusedElementId, setFocusedElementId] = useState(null);
     const [focusedElementType, setFocusedElementType] = useState(null);
-    const [photos, setPhotos] = useState([]);
+    const [photos, setPhotos] = useState(new Map());
     const [notes, setNotes] = useState([]);
     const [layout, setLayout] = useState(defaultLayout);
 
@@ -50,13 +50,16 @@ function Moment(props) {
     useEffect(() => {
         console.debug('streaming photos...');//
         const cleanup = FirestoreService.streamPhotos(momentId, (snapshot) => {
-            const items = snapshot.docs.map((documentSnapshot) => {
+            const items = new Map();
+            snapshot.docs.forEach((documentSnapshot) => {
                 const id = documentSnapshot.id;
-                return {
+                const item = {
                     id: id,
                     alt: documentSnapshot.data().alt,
                     src: LocalStorageService.getPhoto(id),
                 };
+
+                items.set(id, item);
             });
 
             setPhotos(items);
@@ -70,7 +73,7 @@ function Moment(props) {
     // fetch images from storage
     // TODO: after image added, 12 requests are sent. check why so many.
     useEffect(() => {
-        for (const photo of photos) {
+        for (const photo of photos.values()) {
             const src = LocalStorageService.getPhoto(photo.id);
             if (src) {
                 photo.src = src;
@@ -219,7 +222,7 @@ function Moment(props) {
         switch (componentName) {
             case ('Photos'):
                 return (
-                    <Photos photos={photos} addPhoto={addPhoto} removePhoto={remove}
+                    <Photos photos={Array.from(photos.values())} addPhoto={addPhoto} removePhoto={remove}
                             setFocused={setFocused}/>
                 );
             case ('Notes'):
