@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import './Moment.css';
 import Header from "./Header";
 import Notes from "./Notes";
@@ -7,6 +7,7 @@ import './global.css';
 import {FaTimes, FaTrash} from 'react-icons/fa';
 import {withRouter} from "react-router-dom";
 import * as FirestoreService from "./services/firestore";
+import * as LocalStorageService from "./services/localStorage";
 
 function Moment(props) {
     const defaultLayout = [
@@ -35,7 +36,6 @@ function Moment(props) {
     const [photos, setPhotos] = useState([]);
     const [notes, setNotes] = useState([]);
     const [layout, setLayout] = useState(defaultLayout);
-    const [cachedPhotoUrls, setCachedPhotoUrls] = useState({});
 
     // mark component as mounted so we don't set any states after unmount
     const isComponentMounted = useRef(true);
@@ -45,22 +45,8 @@ function Moment(props) {
         }
     }, []);
 
-    // get image cache from local storage
-    useEffect(() => {
-        let photoCache = localStorage.getItem('photoCache');
-        photoCache = photoCache ? JSON.parse(photoCache) : {};
-        setCachedPhotoUrls(photoCache);
-        console.debug(photoCache);//
-    }, []);
-
-    // save a callback for getting photo src from cache
-    const getCached = useCallback(
-        (id) => {
-            return cachedPhotoUrls[id] ?? null;
-        }, [cachedPhotoUrls]
-    );
-
     // subscribe to photos
+    // TODO: after new photo added, it's not shown until re-render
     useEffect(() => {
         console.debug('streaming photos...');//
         const cleanup = FirestoreService.streamPhotos(momentId, (snapshot) => {
@@ -69,7 +55,7 @@ function Moment(props) {
                 return {
                     id: id,
                     alt: documentSnapshot.data().alt,
-                    src: getCached(id),
+                    src: LocalStorageService.getPhoto(id),
                 };
             });
 
@@ -79,13 +65,13 @@ function Moment(props) {
         return function photosUnsubscribe() {
             cleanup();
         };
-    }, [momentId, getCached]);
+    }, [momentId]);
 
     // fetch images from storage
     // TODO: after image added, 12 requests are sent. check why so many.
     useEffect(() => {
         for (const photo of photos) {
-            const src = getCached(photo.id);
+            const src = LocalStorageService.getPhoto(photo.id);
             if (src) {
                 photo.src = src;
                 continue;
@@ -100,12 +86,10 @@ function Moment(props) {
                     // cache it
                     if (isComponentMounted.current) {
                         console.debug('updating cache...');//
-                        setCachedPhotoUrls(cache => {
-                            cache[photo.id] = url;
-                            localStorage.setItem('photoCache', JSON.stringify(cache));
-                            return Object.assign(cache, {[photo.id]: url});
-                        });
+                        LocalStorageService.setPhoto(photo);
                     }
+
+                    setPhotos(photos);
                 }, (error) => {
                     if (photo.src) {
                         // file could not be downloaded
@@ -117,17 +101,7 @@ function Moment(props) {
                     return null;
                 });
         }
-    }, [momentId, getCached, photos]);
-
-    // update photos from cache
-    useEffect(() => {
-        console.debug('loading photos from cache');//
-        for (const photo of photos) {
-            if (! photo.src) {
-                photo.src = cachedPhotoUrls[photo.id];
-            }
-        }
-    }, [cachedPhotoUrls]);
+    }, [momentId, photos]);
 
     // subscribe to notes
     useEffect(() => {
