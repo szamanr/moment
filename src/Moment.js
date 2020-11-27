@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import './Moment.css';
 import Header from "./Header";
 import Notes from "./Notes";
@@ -38,62 +38,100 @@ function Moment(props) {
     const [cachedPhotoUrls, setCachedPhotoUrls] = useState({});
 
     // mark component as mounted so we don't set any states after unmount
-    const isMountedRef = useRef(true);
+    const isComponentMounted = useRef(true);
     useEffect(() => {
         return function whenUnmounted() {
-            isMountedRef.current = false;
+            isComponentMounted.current = false;
         }
     }, []);
 
-    // subscribe to photos
-    // TODO: issues with infinite call loop between photo subscribe and image storage fetch
+    // get image cache from local storage
     useEffect(() => {
-        const photosUnsubscribe = FirestoreService.streamPhotos(momentId, (snapshot) => {
+        let photoCache = localStorage.getItem('photoCache');
+        photoCache = photoCache ? JSON.parse(photoCache) : {};
+        setCachedPhotoUrls(photoCache);
+        console.debug(photoCache);//
+    }, []);
+
+    // save a callback for getting photo src from cache
+    const getCached = useCallback(
+        (id) => {
+            return cachedPhotoUrls[id] ?? null;
+        }, [cachedPhotoUrls]
+    );
+
+    // subscribe to photos
+    useEffect(() => {
+        console.debug('streaming photos...');//
+        const cleanup = FirestoreService.streamPhotos(momentId, (snapshot) => {
             const items = snapshot.docs.map((documentSnapshot) => {
                 const id = documentSnapshot.id;
                 return {
                     id: id,
                     alt: documentSnapshot.data().alt,
-                    src: cachedPhotoUrls[id] ?? null,
+                    src: getCached(id),
                 };
             });
 
             setPhotos(items);
         });
 
-        return function cleanup() {
-            photosUnsubscribe();
+        return function photosUnsubscribe() {
+            cleanup();
         };
-    }, [momentId, cachedPhotoUrls]);
+    }, [momentId, getCached]);
 
     // fetch images from storage
     // TODO: after image added, 12 requests are sent. check why so many.
     useEffect(() => {
         for (const photo of photos) {
-            if (!cachedPhotoUrls[photo.id]) {
-                FirestoreService.getStorageItem(momentId, photo.id)
-                    .then((url) => {
-                        // cache it
-                        if (isMountedRef.current) {
-                            setCachedPhotoUrls(Object.assign({}, cachedPhotoUrls, {[photo.id]: url}));
-                        }
-                    }, (error) => {
-                        if (photo.src) {
-                            // file could not be downloaded
-                            console.error(error);
-                        } else {
-                            // file is still being uploaded, download will try again
-                        }
+            const src = getCached(photo.id);
+            if (src) {
+                photo.src = src;
+                continue;
+            }
 
-                        return null;
-                    });
+            console.debug('fetching image for photo ' + photo.id);//
+
+            FirestoreService.getStorageItem(momentId, photo.id)
+                .then((url) => {
+                    photo.src = url;
+
+                    // cache it
+                    if (isComponentMounted.current) {
+                        console.debug('updating cache...');//
+                        setCachedPhotoUrls(cache => {
+                            cache[photo.id] = url;
+                            localStorage.setItem('photoCache', JSON.stringify(cache));
+                            return Object.assign(cache, {[photo.id]: url});
+                        });
+                    }
+                }, (error) => {
+                    if (photo.src) {
+                        // file could not be downloaded
+                        console.error(error);
+                    } else {
+                        // file is still being uploaded, download will try again
+                    }
+
+                    return null;
+                });
+        }
+    }, [momentId, getCached, photos]);
+
+    // update photos from cache
+    useEffect(() => {
+        console.debug('loading photos from cache');//
+        for (const photo of photos) {
+            if (! photo.src) {
+                photo.src = cachedPhotoUrls[photo.id];
             }
         }
-    }, [momentId, cachedPhotoUrls, photos]);
+    }, [cachedPhotoUrls]);
 
     // subscribe to notes
     useEffect(() => {
-        const notesUnsubscribe = FirestoreService.streamNotes(momentId, (snapshot) => {
+        const cleanup = FirestoreService.streamNotes(momentId, (snapshot) => {
             let items = [];
 
             snapshot.forEach((documentSnapshot) => {
@@ -108,8 +146,8 @@ function Moment(props) {
             setNotes(items);
         });
 
-        return function cleanup() {
-            notesUnsubscribe();
+        return function notesUnsubscribe() {
+            cleanup();
         }
     }, [momentId]);
 
