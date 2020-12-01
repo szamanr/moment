@@ -37,6 +37,9 @@ function Moment(props) {
     const [notes, setNotes] = useState([]);
     const [layout, setLayout] = useState(defaultLayout);
 
+    // set flag when uploading photo, so we can display it when upload is finished
+    const [isPhotoUploading, setIsPhotoUploading] = useState(false);
+
     // mark component as mounted so we don't set any states after unmount
     const isComponentMounted = useRef(true);
     useEffect(() => {
@@ -46,7 +49,6 @@ function Moment(props) {
     }, []);
 
     // subscribe to photos
-    // TODO: after new photo added, it's not shown until re-render
     useEffect(() => {
         console.debug('streaming photos...');//
         const cleanup = FirestoreService.streamPhotos(momentId, (snapshot) => {
@@ -104,7 +106,7 @@ function Moment(props) {
                     return null;
                 });
         }
-    }, [momentId, photos]);
+    }, [momentId, photos, isPhotoUploading]);
 
     // subscribe to notes
     useEffect(() => {
@@ -173,11 +175,15 @@ function Moment(props) {
         for (const file of files) {
             const ref = FirestoreService.add(momentId, 'photos', {src: file.name, alt: file.name});
 
+            setIsPhotoUploading(true);
+
             FirestoreService.upload(momentId, ref.id, file, metadata)
                 .then((imageRef) => {
                     ref.update({
                         storage: imageRef.fullPath
                     });
+
+                    setIsPhotoUploading(false);
                 });
         }
     }
