@@ -1,9 +1,20 @@
+:root {
+    --base-color: #e8e6e3;
+    --base-background: #181a1b;
+    --lighter-background: #313638;
+}
+
 a {
     text-decoration: none;
 }
 
 .button {
     cursor: pointer;
+}
+
+input, textarea {
+    color: var(--base-color);
+    background-color: var(--lighter-background);
 }
 
 .brand {

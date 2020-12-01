@@ -104,6 +104,25 @@ export const add = (momentId, collection, item) => {
 };
 
 /**
+ * updates an element in a collection
+ *
+ * @param momentId
+ * @param collection
+ * @param item
+ * @returns {*}
+ */
+export const update = (momentId, collection, item) => {
+    const ref = db.collection('moments').doc(momentId)
+        .collection(collection).doc(item.id);
+
+    ref.update(Object.assign(item, {
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }));
+
+    return ref;
+}
+
+/**
  * uploads a file to storage
  *
  * @param momentId

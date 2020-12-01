@@ -4,7 +4,7 @@ import Header from "./Header";
 import Notes from "./Notes";
 import Photos from "./Photos";
 import './global.css';
-import {FaTimes, FaTrash} from 'react-icons/fa';
+import {FaPencilRuler, FaTimes, FaTrash} from 'react-icons/fa';
 import {withRouter} from "react-router-dom";
 import * as FirestoreService from "./services/firestore";
 import * as LocalStorageService from "./services/localStorage";
@@ -34,11 +34,13 @@ function Moment(props) {
     const [focusedElementId, setFocusedElementId] = useState(null);
     const [focusedElementType, setFocusedElementType] = useState(null);
     const [photos, setPhotos] = useState(new Map());
-    const [notes, setNotes] = useState([]);
+    const [notes, setNotes] = useState(new Map());
     const [layout, setLayout] = useState(defaultLayout);
 
     // set flag when uploading photo, so we can display it when upload is finished
     const [isPhotoUploading, setIsPhotoUploading] = useState(false);
+    // flag for note editing mode
+    const [isNoteEditing, setIsNoteEditing] = useState(false);
 
     // mark component as mounted so we don't set any states after unmount
     const isComponentMounted = useRef(true);
@@ -111,15 +113,16 @@ function Moment(props) {
     // subscribe to notes
     useEffect(() => {
         const cleanup = FirestoreService.streamNotes(momentId, (snapshot) => {
-            let items = [];
+            let items = new Map();
 
             snapshot.forEach((documentSnapshot) => {
                 const item = documentSnapshot.data();
-                items.push({
+
+                items.set(documentSnapshot.id, {
                     id: documentSnapshot.id,
                     title: item.title,
                     content: item.content,
-                });
+                })
             });
 
             setNotes(items);
@@ -233,7 +236,7 @@ function Moment(props) {
                 );
             case ('Notes'):
                 return (
-                    <Notes notes={notes} addNote={(note) => {
+                    <Notes notes={Array.from(notes.values())} addNote={(note) => {
                         FirestoreService.add(momentId, 'notes', note)
                     }} setFocused={setFocused}/>
                 );
@@ -250,18 +253,43 @@ function Moment(props) {
      * @returns {*}
      */
     const renderFocusedElement = function (element, type) {
+        const editableNote = (
+            <div className="note">
+                <div className="title">
+                    <label htmlFor="title">title:</label><br/>
+                    <input type="text" id="title" defaultValue={element.title} onChange={(e) => {
+                        // TODO: debounce input
+                        element.title = e.target.value;
+                        FirestoreService.update(momentId, "notes", element);
+                    }}/>
+                </div>
+                <div className="content">
+                    <label htmlFor="content">content:</label>
+                    <textarea id="content" value={element.content} onChange={(e) => {
+                        element.content = e.target.value;
+                        FirestoreService.update(momentId, "notes", element);
+                    }}/>
+                </div>
+            </div>
+        );
+
+
         switch (type) {
             case 'photos':
                 return (
                     <img className="photo" src={element.src} alt={element.alt}/>
                 );
             case 'notes':
-                return (
-                    <div className="note">
-                        <h3 className="title">{element.title}</h3>
-                        <p className="content" dangerouslySetInnerHTML={{__html: element.content}}/>
-                    </div>
-                );
+                if (isNoteEditing) {
+                    return editableNote;
+                } else {
+                    return (
+                        <div className="note">
+                            <h2 className="title">{element.title}</h2>
+                            <p className="content" dangerouslySetInnerHTML={{__html: element.content}}/>
+                        </div>
+                    );
+                }
             default:
                 return;
         }
@@ -295,6 +323,12 @@ function Moment(props) {
                 <div id="focused-buttons" className="row">
                     <div className="button danger" id="focused-element-remove"
                          onClick={removeFocusedElement}><span><FaTrash/></span></div>
+                    <div className="button warning" id="focused-element-edit"
+                         onClick={() => {
+                             setIsNoteEditing((prev) => !prev);
+                         }}>
+                        <span><FaPencilRuler/></span>
+                    </div>
                     <div className="button" id="focused-element-close"
                          onClick={() => {
                              setFocused()
