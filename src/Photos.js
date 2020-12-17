@@ -9,32 +9,21 @@ function Photos(props) {
     };
 
     /**
-     * removes an item from the list
-     * @param id
-     * @param e
-     */
-    const removePhoto = (id, e) => {
-        e.preventDefault();
-
-        props.removePhoto(id);
-    }
-
-    /**
      * opens the selected photo in focused view
      *
      * @param id
      * @param e
      */
-    const focusedPhoto = (id, e) => {
+    const onClick = (id, e) => {
         e.preventDefault();
 
-        props.setFocused(e.target, id, 'photos');
+        props.onClick(e.target, id, 'photos');
     }
 
     const addPhotoElement = (
         <div className="photo photo-add">
             <label htmlFor="photo-add" className="button brand">
-                <FaPlus/>
+                <FaPlus title="add photo"/>
             </label>
             <input id="photo-add" name="photo-add" type="file" hidden multiple={true}
                    onChange={(e) => {
@@ -45,7 +34,7 @@ function Photos(props) {
 
     const photoElements = props.photos.map((photo) => {
         return (
-            <div key={photo.id} className="photo" onClick={focusedPhoto.bind(this, photo.id)}>
+            <div key={photo.id} className="photo" onClick={onClick.bind(this, photo.id)}>
                 <img src={photo.src} width={size.w} height={size.h} alt={photo.alt}/>
             </div>
         );

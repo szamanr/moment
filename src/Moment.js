@@ -27,7 +27,6 @@ function Moment() {
         },
     ];
 
-    // TODO: use custom hook?
     const {momentId} = useParams();
 
     const [focusedElement, setFocusedElement] = useState(null);
@@ -231,8 +230,7 @@ function Moment() {
         switch (componentName) {
             case ('Photos'):
                 return (
-                    <Photos photos={Array.from(photos.values())} addPhoto={addPhoto} removePhoto={remove}
-                            setFocused={setFocused}/>
+                    <Photos photos={Array.from(photos.values())} onClick={setFocused} addPhoto={addPhoto}/>
                 );
             case ('Notes'):
                 return (
