@@ -34,7 +34,7 @@ function Photos(props) {
 
     const photoElements = props.photos.map((photo) => {
         return (
-            <div key={photo.id} className="photo" onClick={onClick.bind(this, photo.id)}>
+            <div key={photo.id} className="photo" onClick={onClick.bind(this, photo.id)} aria-label="photo">
                 <img src={photo.src} width={size.w} height={size.h} alt={photo.alt}/>
             </div>
         );
