@@ -21,7 +21,7 @@ function App() {
         <div>
             <div>
                 <Route exact path="/dashboard" component={Dashboard}/>
-                <Route path="/moment/:id">
+                <Route path="/moment/:momentId">
                     <Moment/>
                 </Route>
                 <Route path="/">

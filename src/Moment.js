@@ -1,15 +1,15 @@
 import React, {useEffect, useRef, useState} from 'react';
+import {useParams, withRouter} from 'react-router-dom';
 import './Moment.css';
 import Header from "./Header";
 import Notes from "./Notes";
 import Photos from "./Photos";
 import './global.css';
 import {FaPencilRuler, FaTimes, FaTrash} from 'react-icons/fa';
-import {withRouter} from "react-router-dom";
 import * as FirestoreService from "./services/firestore";
 import * as LocalStorageService from "./services/localStorage";
 
-function Moment(props) {
+function Moment() {
     const defaultLayout = [
         {
             className: 'row double',
@@ -28,7 +28,7 @@ function Moment(props) {
     ];
 
     // TODO: use custom hook?
-    const momentId = props.match.params.id;
+    const {momentId} = useParams();
 
     const [focusedElement, setFocusedElement] = useState(null);
     const [focusedElementId, setFocusedElementId] = useState(null);
