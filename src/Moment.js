@@ -299,12 +299,12 @@ function Moment() {
                 <div id="focused-buttons" className="row">
                     <div className="button danger" id="focused-element-remove"
                          onClick={removeFocusedElement}><span><FaTrash/></span></div>
-                    <div className="button warning" id="focused-element-edit"
-                         onClick={() => {
-                             setIsNoteEditing((prev) => !prev);
-                         }}>
+                    {focusedElementType === "notes" ? <div className="button warning" id="focused-element-edit"
+                          onClick={() => {
+                              setIsNoteEditing((prev) => !prev);
+                          }}>
                         <span><FaPencilRuler/></span>
-                    </div>
+                    </div> : null}
                     <div className="button" id="focused-element-close"
                          onClick={() => {
                              setFocused()
