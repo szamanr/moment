@@ -22,10 +22,10 @@ function Photos(props) {
 
     const addPhotoElement = (
         <div className="photo photo-add">
-            <label htmlFor="photo-add" className="button brand">
-                <FaPlus title="add photo"/>
+            <label htmlFor="photo-add" className="button brand" title="add photo">
+                <FaPlus/>
             </label>
-            <input id="photo-add" name="photo-add" type="file" hidden multiple={true}
+            <input data-testid="photo-add" id="photo-add" name="photo-add" type="file" hidden multiple={true}
                    onChange={(e) => {
                        props.addPhoto(e.target.files, defaultMetadata);
                    }}/>

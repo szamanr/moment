@@ -16,7 +16,9 @@ const mockPhotos = [
 ];
 
 const mockOnClick = jest.fn(null);
-const mockAddPhoto = jest.fn(null);
+const mockAddPhoto = jest.fn((files, metadata) => {
+    console.debug('uploading files: ', files);//
+});
 
 beforeEach(() => {
     render(
@@ -39,13 +41,19 @@ test('binds passed onClick function to current photo', () => {
     const photos = document.querySelectorAll('div.photo');
     fireEvent.click(photos[0]);
     expect(mockOnClick.mock.calls.length).toBe(1);
-    expect(mockOnClick.mock.calls[0][0]).toBe(photos[0]);
+    expect(mockOnClick.mock.calls[0][0]).toStrictEqual(photos[0]);
 });
 
-xtest('opens image select dialog when button pressed', () => {
-    // TODO
-});
+test('calls passed addPhoto function when new image selected', () => {
+    const inputElement = screen.getByTestId("photo-add");
+    const file = new File(['(⌐□_□)'], 'chucknorris.png', {type: 'image/png'});
 
-xtest('calls passed addPhoto function when new image selected', () => {
-    // TODO
+    fireEvent.change(inputElement, {
+        target: {
+            files: file,
+        }
+    })
+
+    expect(mockAddPhoto.mock.calls.length).toBe(1);
+    expect(mockAddPhoto.mock.calls[0][0]).toStrictEqual(file);
 })
