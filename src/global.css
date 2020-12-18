@@ -2,10 +2,17 @@
     --base-color: #e8e6e3;
     --base-background: #181a1b;
     --lighter-background: #313638;
+    --brand: #005dc1;
+    --alt: #C26400;
 }
 
 a {
     text-decoration: none;
+    color: var(--brand);
+}
+
+a:hover, button:hover, .button:hover {
+    filter: brightness(1.5);
 }
 
 .button {
@@ -18,11 +25,11 @@ input, textarea {
 }
 
 .brand {
-    color: #005dc1;
+    color: var(--brand);
 }
 
 .alt {
-    color: #C26400;
+    color: var(--alt);
 }
 
 .success {
