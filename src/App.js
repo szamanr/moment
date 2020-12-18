@@ -8,7 +8,6 @@ import "./App.css";
 
 function App() {
     const history = useHistory();
-    const {momentId} = useParams();
 
     // TODO: implement login
     const signIn = function () {
@@ -22,7 +21,7 @@ function App() {
         <div className="App">
             <Route exact path="/dashboard" component={Dashboard}/>
             <Route path="/moment/:momentId">
-                <Header className="Header" momentId={momentId}/>
+                <Header className="Header"/>
                 <Moment/>
             </Route>
             <Route exact path="/">

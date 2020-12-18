@@ -1,15 +1,17 @@
 import React from 'react';
 import './Header.css';
 import {FaCogs, FaLongArrowAltLeft, FaStar, FaUserCircle} from 'react-icons/fa'
-import {Link} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 
 function Header(props) {
+    const {momentId} = useParams();
+
     return (
         <header className="Header">
             <Link to="/dashboard">
                 <span className="button brand" id='header-back'><FaLongArrowAltLeft/></span>
             </Link>
-            <h3 id='header-title'>moment #{props.momentId}</h3>
+            <h3 id='header-title'>moment #{momentId}</h3>
             <div id="header-buttons">
                 <span className="button brand" id='header-favorite'><FaStar/></span>
                 <span className="button brand" id='header-menu'><FaCogs/></span>
