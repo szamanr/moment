@@ -1,6 +1,4 @@
 .notes {
-    display: grid;
-    grid-template: 1fr 1fr 1fr 1fr 1fr 1fr / auto;
     height: 100%;
     width: 100%;
     list-style-type: none;
@@ -8,9 +6,8 @@
 }
 
 .notes .note {
-    display: grid;
-    align-items: center;
     cursor: pointer;
+    height: 40px;
 }
 
 .notes .note:nth-child(even) {
@@ -19,4 +16,7 @@
 
 .notes .note > span {
     padding: 0 5px;
+    height: 100%;
+    display: grid;
+    align-items: center;
 }

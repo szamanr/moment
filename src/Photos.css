@@ -9,6 +9,7 @@
     margin: 5px;
     display: grid;
     place-items: center;
+    cursor: pointer;
 }
 
 .photos .photo-add {
