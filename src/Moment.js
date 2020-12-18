@@ -1,7 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {useParams, withRouter} from 'react-router-dom';
 import './Moment.css';
-import Header from "./Header";
 import Notes from "./Notes";
 import Photos from "./Photos";
 import './global.css';
@@ -293,31 +292,10 @@ function Moment() {
         }
     }
 
-    const content = (
-        layout.map((row, index) => {
-            return (
-                <div className={row.className} key={index}>
-                    {row.components.map((component, index) => {
-                        return (
-                            <div className="box" key={index}>
-                                {initComponent(component)}
-                            </div>
-                        );
-                    })}
-                </div>
-            );
-        })
-    );
-
-    let mainDiv = (
-        <main id="main">
-            {content}
-        </main>
-    );
-
+    // focused view - only display the focused element, stretched to fill full component size
     if (focusedElement) {
-        mainDiv = (
-            <main id="main" className="focused">
+        return (
+            <main className="focused">
                 <div id="focused-buttons" className="row">
                     <div className="button danger" id="focused-element-remove"
                          onClick={removeFocusedElement}><span><FaTrash/></span></div>
@@ -339,14 +317,23 @@ function Moment() {
         );
     }
 
+    // not in focused view — display all component based on layout
     return (
-        <div className="App">
-            <Header className="Header" momentId={momentId}/>
-            {mainDiv}
-            <footer>
-                [footer]
-            </footer>
-        </div>
+        <main>
+            {layout.map((row, index) => {
+                return (
+                    <div className={row.className} key={index}>
+                        {row.components.map((component, index) => {
+                            return (
+                                <div className="box" key={index}>
+                                    {initComponent(component)}
+                                </div>
+                            );
+                        })}
+                    </div>
+                );
+            })}
+        </main>
     );
 }
 
