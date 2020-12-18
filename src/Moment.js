@@ -9,23 +9,6 @@ import * as FirestoreService from "./services/firestore";
 import * as LocalStorageService from "./services/localStorage";
 
 function Moment() {
-    const defaultLayout = [
-        {
-            className: 'row double',
-            components: [
-                'Photos'
-            ]
-        },
-        {
-            className: 'row',
-            components: [
-                '[map]',
-                'Notes',
-                '[player]'
-            ]
-        },
-    ];
-
     const {momentId} = useParams();
 
     const [focusedElement, setFocusedElement] = useState(null);
@@ -33,7 +16,7 @@ function Moment() {
     const [focusedElementType, setFocusedElementType] = useState(null);
     const [photos, setPhotos] = useState(new Map());
     const [notes, setNotes] = useState(new Map());
-    const [layout, setLayout] = useState(defaultLayout);
+    const [layout, setLayout] = useState([]);
 
     // set flag when uploading photo, so we can display it when upload is finished
     const [isPhotoUploading, setIsPhotoUploading] = useState(false);
@@ -47,6 +30,13 @@ function Moment() {
             isComponentMounted.current = false;
         }
     }, []);
+
+    // fetch layout
+    useEffect(() => {
+        FirestoreService.getMoment(momentId).then((moment) => {
+            setLayout(moment.get('layout'));
+        });
+    }, [momentId]);
 
     // subscribe to photos
     useEffect(() => {

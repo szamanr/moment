@@ -10,7 +10,12 @@ const firebaseConfig = {
     appId: "1:897838693187:web:09b69181f3a9dd67ff4df6"
 };
 
-firebase.initializeApp(firebaseConfig);
+// initialise app or use existing one
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+} else {
+    firebase.app();
+}
 
 const db = firebase.firestore();
 const storage = firebase.storage();
@@ -43,6 +48,12 @@ export const streamMoments = (user, observer) => {
     return db.collection('moments')
         .where('users', 'array-contains', user.uid)
         .onSnapshot(observer);
+};
+
+export const getMoment = (id) => {
+    return db.collection('moments')
+        .doc(id)
+        .get();
 };
 
 /**
