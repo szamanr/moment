@@ -56,4 +56,4 @@ test('calls passed addPhoto function when new image selected', () => {
 
     expect(mockAddPhoto.mock.calls.length).toBe(1);
     expect(mockAddPhoto.mock.calls[0][0]).toStrictEqual(file);
-})
+});

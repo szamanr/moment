@@ -14,7 +14,7 @@ function Notes(props) {
     }
 
     const addNoteElement = (
-        <li key="new" onClick={addNote} className="note note-add">
+        <li key="new" onClick={addNote} className="note note-add" title="add note">
             <span className="button brand">
                 <FaPlus/>
             </span>
@@ -23,9 +23,7 @@ function Notes(props) {
 
     const notesElement = props.notes.map((note) => {
         return (
-            <li key={note.id} className="note" onClick={() => {
-                props.setFocused(note, note.id, 'notes')
-            }}>
+            <li key={note.id} className="note" onClick={props.onClick.bind(this, note, note.id, 'notes')}>
                 <span>{note.title}</span>
             </li>
         );

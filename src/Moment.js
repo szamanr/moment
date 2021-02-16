@@ -225,7 +225,7 @@ function Moment() {
                 return (
                     <Notes notes={Array.from(notes.values())} addNote={(note) => {
                         FirestoreService.add(momentId, 'notes', note)
-                    }} setFocused={setFocused}/>
+                    }} onClick={setFocused}/>
                 );
             default:
                 return componentName;
