@@ -147,12 +147,11 @@ function Moment() {
      * sets the chosen element to be focused, i.e. displayed as the only element in the main view
      *
      * @param element
-     * @param id
      * @param type
      */
-    const setFocused = function (element = null, id = null, type = null) {
+    const setFocused = function (type = null, element = null) {
         setFocusedElement(element);
-        setFocusedElementId(id);
+        setFocusedElementId(element?.id);
         setFocusedElementType(type);
     }
 
@@ -219,13 +218,13 @@ function Moment() {
         switch (componentName) {
             case ('Photos'):
                 return (
-                    <Photos photos={Array.from(photos.values())} onClick={setFocused} addPhoto={addPhoto}/>
+                    <Photos photos={Array.from(photos.values())} onClick={setFocused.bind(null, 'photos')} addPhoto={addPhoto}/>
                 );
             case ('Notes'):
                 return (
                     <Notes notes={Array.from(notes.values())} addNote={(note) => {
                         FirestoreService.add(momentId, 'notes', note)
-                    }} onClick={setFocused}/>
+                    }} onClick={setFocused.bind(null, 'notes')}/>
                 );
             default:
                 return componentName;

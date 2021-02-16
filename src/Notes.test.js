@@ -44,7 +44,7 @@ test('binds passed onClick function to current note', () => {
 
     const clickedNote = mockOnClick.mock.calls[0][0];
     expect(clickedNote).toBeDefined();
-    expect(clickedNote.title).toStrictEqual(item.innerText);
+    expect(clickedNote.title).toStrictEqual(item.textContent);
 });
 
 test('calls passed addNote function after clicking on new note button', () => {

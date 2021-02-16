@@ -38,10 +38,15 @@ test('renders add photo button', () => {
 });
 
 test('binds passed onClick function to current photo', () => {
-    const photos = document.querySelectorAll('div.photo');
-    fireEvent.click(photos[0]);
+    const photoElement = document.querySelectorAll('div.photo')[0];
+    const photo = photoElement.querySelector('img');
+
+    fireEvent.click(photoElement);
     expect(mockOnClick.mock.calls.length).toBe(1);
-    expect(mockOnClick.mock.calls[0][0]).toStrictEqual(photos[0]);
+
+    const passedPhoto = mockOnClick.mock.calls[0][0];
+    expect(passedPhoto).toBeDefined();
+    expect(passedPhoto.alt).toStrictEqual(photo.alt);
 });
 
 test('calls passed addPhoto function when new image selected', () => {

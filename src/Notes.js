@@ -23,7 +23,7 @@ function Notes(props) {
 
     const notesElement = props.notes.map((note) => {
         return (
-            <li key={note.id} className="note" onClick={props.onClick.bind(this, note, note.id, 'notes')}>
+            <li key={note.id} className="note" onClick={props.onClick.bind(null, note)}>
                 <span>{note.title}</span>
             </li>
         );

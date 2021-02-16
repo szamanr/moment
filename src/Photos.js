@@ -8,18 +8,6 @@ function Photos(props) {
         cacheControl: 'public, max-age=900, immutable'
     };
 
-    /**
-     * opens the selected photo in focused view
-     *
-     * @param id
-     * @param e
-     */
-    const onClick = (id, e) => {
-        e.preventDefault();
-
-        props.onClick(e.target, id, 'photos');
-    }
-
     const addPhotoElement = (
         <div className="photo photo-add">
             <label htmlFor="photo-add" className="button brand" title="add photo">
@@ -34,7 +22,7 @@ function Photos(props) {
 
     const photoElements = props.photos.map((photo) => {
         return (
-            <div key={photo.id} className="photo" onClick={onClick.bind(this, photo.id)} aria-label="photo">
+            <div key={photo.id} className="photo" onClick={props.onClick.bind(null, photo)} aria-label="photo">
                 <img src={photo.src} width={size.w} height={size.h} alt={photo.alt}/>
             </div>
         );
