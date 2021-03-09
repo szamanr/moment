@@ -24,7 +24,7 @@ function App() {
     return (
         <div className="App">
             <Route exact path={["/", "/dashboard"]}>
-                <Dashboard/>
+                <Dashboard firebase={firebaseApp}/>
             </Route>
 
             <Route path="/moment/:momentId">

@@ -29,23 +29,31 @@ export const authenticateAnonymously = () => {
     return firebase.auth().signInAnonymously();
 };
 
-/**
- * subscribes to the moments collection for a given user
- *
- * @param user
- * @param observer
- * @returns An unsubscribe function that can be called to cancel the snapshot listener.
- */
-export const streamMoments = (user, observer) => {
-    return db.collection('moments')
-        .where('users', 'array-contains', user.uid)
-        .onSnapshot(observer);
-};
-
 export const getMoment = (id) => {
     return db.collection('moments')
         .doc(id)
         .get();
+};
+
+/**
+ * parses moments from a firebase snapshot into an array
+ *
+ * @param snapshot
+ * @returns {[]}
+ */
+export const parseMoments = (snapshot) => {
+    const items = [];
+
+    snapshot.forEach((documentSnapshot) => {
+        const item = documentSnapshot.data();
+        const title = item.title ?? 'moment ' + documentSnapshot.id
+        items.push({
+            id: documentSnapshot.id,
+            title
+        });
+    });
+
+    return items;
 };
 
 /**
