@@ -1,14 +1,6 @@
 import firebase from "firebase";
-
-const firebaseConfig = {
-    apiKey: "AIzaSyD5IMuc6iK6KTGFQwbZAc7c7QkFGzZV1MQ",
-    authDomain: "moment-a16db.firebaseapp.com",
-    databaseURL: "https://moment-a16db.firebaseio.com",
-    projectId: "moment-a16db",
-    storageBucket: "moment-a16db.appspot.com",
-    messagingSenderId: "897838693187",
-    appId: "1:897838693187:web:09b69181f3a9dd67ff4df6"
-};
+import * as LocalStorageService from "./localStorage";
+import firebaseConfig from "../firebase.config";
 
 // initialise app or use existing one
 if (!firebase.apps.length) {
@@ -57,17 +49,25 @@ export const getMoment = (id) => {
 };
 
 /**
- * subscribe to the photos collection for a given Moment
+ * parse photos from a firebase snapshot into a map
  *
- * @param momentId
- * @param observer
- * @return An unsubscribe function that can be called to cancel the snapshot listener.
+ * @param snapshot
+ * @returns {Map<any, any>}
  */
-export const streamPhotos = (momentId, observer) => {
-    return db.collection('moments').doc(momentId)
-        .collection('photos')
-        .orderBy('createdAt')
-        .onSnapshot(observer);
+export const parsePhotos = snapshot => {
+    const items = new Map();
+    snapshot?.docs.forEach((documentSnapshot) => {
+        const id = documentSnapshot.id;
+        const item = {
+            id: id,
+            alt: documentSnapshot.data().alt,
+            src: LocalStorageService.getPhoto(id),
+        };
+
+        items.set(id, item);
+    });
+
+    return items;
 };
 
 /**

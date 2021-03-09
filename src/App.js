@@ -1,14 +1,24 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {Route} from "react-router-dom";
 import Moment from "./Moment";
 import Dashboard from "./Dashboard";
-import * as FirestoreService from "./services/firestore";
 import Header from "./Header";
 import "./App.css";
+import firebase from "firebase/app";
+import firebaseConfig from "./firebase.config";
 
 function App() {
+    const [firebaseApp, setFirebase] = useState(null);
+
     useEffect(() => {
-        FirestoreService.authenticate();
+        // initialise app or use existing one
+        if (!firebase.apps.length) {
+            setFirebase(firebase.initializeApp(firebaseConfig));
+        } else {
+            setFirebase(firebase.app());
+        }
+
+        firebase.auth().signInWithEmailAndPassword('user1@mailinator.com', 'MomentMoment123#');
     }, []);
 
     return (
@@ -19,7 +29,7 @@ function App() {
 
             <Route path="/moment/:momentId">
                 <Header className="Header"/>
-                <Moment/>
+                <Moment firebase={firebaseApp}/>
             </Route>
 
             <footer>

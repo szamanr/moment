@@ -8,7 +8,7 @@ import {FaPencilRuler, FaTimes, FaTrash} from 'react-icons/fa';
 import * as FirestoreService from "./services/firestore";
 import * as LocalStorageService from "./services/localStorage";
 
-function Moment() {
+function Moment({firebase}) {
     const {momentId} = useParams();
 
     const [focusedElement, setFocusedElement] = useState(null);
@@ -41,26 +41,18 @@ function Moment() {
     // subscribe to photos
     useEffect(() => {
         console.debug('streaming photos...');//
-        const cleanup = FirestoreService.streamPhotos(momentId, (snapshot) => {
-            const items = new Map();
-            snapshot.docs.forEach((documentSnapshot) => {
-                const id = documentSnapshot.id;
-                const item = {
-                    id: id,
-                    alt: documentSnapshot.data().alt,
-                    src: LocalStorageService.getPhoto(id),
-                };
-
-                items.set(id, item);
+        const cleanup = firebase.firestore().collection('moments').doc(momentId)
+            .collection('photos')
+            .orderBy('createdAt')
+            .onSnapshot(snapshot => {
+                const items = FirestoreService.parsePhotos(snapshot);
+                setPhotos(items);
             });
-
-            setPhotos(items);
-        });
 
         return function photosUnsubscribe() {
             cleanup();
         };
-    }, [momentId]);
+    }, [firebase, momentId]);
 
     // fetch images from storage
     // TODO: after image added, 12 requests are sent. check why so many.
@@ -218,7 +210,8 @@ function Moment() {
         switch (componentName) {
             case ('Photos'):
                 return (
-                    <Photos photos={Array.from(photos.values())} onClick={setFocused.bind(null, 'photos')} addPhoto={addPhoto}/>
+                    <Photos photos={Array.from(photos.values())} onClick={setFocused.bind(null, 'photos')}
+                            addPhoto={addPhoto}/>
                 );
             case ('Notes'):
                 return (
@@ -289,9 +282,9 @@ function Moment() {
                     <div className="button danger" id="focused-element-remove"
                          onClick={removeFocusedElement}><span><FaTrash/></span></div>
                     {focusedElementType === "notes" ? <div className="button warning" id="focused-element-edit"
-                          onClick={() => {
-                              setIsNoteEditing((prev) => !prev);
-                          }}>
+                                                           onClick={() => {
+                                                               setIsNoteEditing((prev) => !prev);
+                                                           }}>
                         <span><FaPencilRuler/></span>
                     </div> : null}
                     <div className="button" id="focused-element-close"
