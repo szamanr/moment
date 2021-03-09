@@ -49,7 +49,7 @@ export const getMoment = (id) => {
 };
 
 /**
- * parse photos from a firebase snapshot into a map
+ * parses photos from a firebase snapshot into a map
  *
  * @param snapshot
  * @returns {Map<any, any>}
@@ -71,18 +71,26 @@ export const parsePhotos = snapshot => {
 };
 
 /**
- * subscribe to the notes collection for a given Moment
+ * parses notes from a firebase snapshot into a map
  *
- * @param momentId
- * @param observer
- * @return An unsubscribe function that can be called to cancel the snapshot listener.
+ * @param snapshot
+ * @returns {Map<any, any>}
  */
-export const streamNotes = (momentId, observer) => {
-    return db.collection('moments').doc(momentId)
-        .collection('notes')
-        .orderBy('createdAt')
-        .onSnapshot(observer);
-}
+export const parseNotes = (snapshot) => {
+    const items = new Map();
+
+    snapshot.forEach((documentSnapshot) => {
+        const item = documentSnapshot.data();
+
+        items.set(documentSnapshot.id, {
+            id: documentSnapshot.id,
+            title: item.title,
+            content: item.content,
+        })
+    });
+
+    return items;
+};
 
 /**
  * fetch a storage item with a given id from a Moment's storage bucket

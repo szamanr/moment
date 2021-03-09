@@ -92,26 +92,18 @@ function Moment({firebase}) {
 
     // subscribe to notes
     useEffect(() => {
-        const cleanup = FirestoreService.streamNotes(momentId, (snapshot) => {
-            let items = new Map();
-
-            snapshot.forEach((documentSnapshot) => {
-                const item = documentSnapshot.data();
-
-                items.set(documentSnapshot.id, {
-                    id: documentSnapshot.id,
-                    title: item.title,
-                    content: item.content,
-                })
+        const cleanup = firebase.firestore().collection('moments').doc(momentId)
+            .collection('notes')
+            .orderBy('createdAt')
+            .onSnapshot(snapshot => {
+                const items = FirestoreService.parseNotes(snapshot);
+                setNotes(items);
             });
-
-            setNotes(items);
-        });
 
         return function notesUnsubscribe() {
             cleanup();
         }
-    }, [momentId]);
+    }, [firebase, momentId]);
 
     // TODO: remove. this is just to test if the layout can be modified dynamically.
     /*useEffect(() => {
