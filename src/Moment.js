@@ -7,6 +7,7 @@ import './global.css';
 import {FaPencilRuler, FaTimes, FaTrash} from 'react-icons/fa';
 import * as FirestoreService from "./services/firestore";
 import * as LocalStorageService from "./services/localStorage";
+import useLayout from "./hooks/useLayout";
 
 function Moment({db}) {
     const {momentId} = useParams();
@@ -16,7 +17,7 @@ function Moment({db}) {
     const [focusedElementType, setFocusedElementType] = useState(null);
     const [photos, setPhotos] = useState(new Map());
     const [notes, setNotes] = useState(new Map());
-    const [layout, setLayout] = useState([]);
+    const layout = useLayout(db, momentId);
 
     // set flag when uploading photo, so we can display it when upload is finished
     const [isPhotoUploading, setIsPhotoUploading] = useState(false);
@@ -30,13 +31,6 @@ function Moment({db}) {
             isComponentMounted.current = false;
         }
     }, []);
-
-    // fetch layout
-    useEffect(() => {
-        FirestoreService.getMoment(momentId).then((moment) => {
-            setLayout(moment.get('layout'));
-        });
-    }, [momentId]);
 
     // subscribe to photos
     useEffect(() => {
