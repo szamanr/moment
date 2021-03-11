@@ -99,28 +99,6 @@ function Moment({db}) {
         }
     }, [db, momentId]);
 
-    // TODO: remove. this is just to test if the layout can be modified dynamically.
-    /*useEffect(() => {
-        setTimeout(() => {
-            setLayout([
-                {
-                    className: 'row',
-                    components: [
-                        '[map]',
-                        'Notes',
-                        '[player]'
-                    ]
-                },
-                {
-                    className: 'row double',
-                    components: [
-                        'Photos'
-                    ]
-                },
-            ]);
-        }, 5000);
-    });*/
-
     /**
      * sets the chosen element to be focused, i.e. displayed as the only element in the main view
      *
