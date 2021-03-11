@@ -3,7 +3,7 @@ import React, {useContext, useEffect, useState} from "react";
 import {UserContext} from "./providers/UserProvider";
 import * as FirestoreService from "./services/firestore";
 
-const Dashboard = ({firebase}) => {
+const Dashboard = ({db}) => {
     const [moments, setMoments] = useState([]);
     const user = useContext(UserContext);
     const history = useHistory();
@@ -15,7 +15,7 @@ const Dashboard = ({firebase}) => {
             return;
         }
 
-        const unsubscribe = firebase.firestore().collection('moments')
+        const unsubscribe = db.collection('moments')
             .where('users', 'array-contains', user.uid)
             .onSnapshot(snapshot => {
                 const items = FirestoreService.parseMoments(snapshot);
@@ -25,7 +25,7 @@ const Dashboard = ({firebase}) => {
         return function cleanup() {
             unsubscribe();
         }
-    }, [firebase, user, history]);
+    }, [db, user, history]);
 
     const momentLinks = moments.map(({id, title}) => (
         <li key={id}><Link to={"/moment/" + id}>{title}</Link></li>)

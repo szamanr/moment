@@ -8,7 +8,7 @@ import {FaPencilRuler, FaTimes, FaTrash} from 'react-icons/fa';
 import * as FirestoreService from "./services/firestore";
 import * as LocalStorageService from "./services/localStorage";
 
-function Moment({firebase}) {
+function Moment({db}) {
     const {momentId} = useParams();
 
     const [focusedElement, setFocusedElement] = useState(null);
@@ -41,7 +41,7 @@ function Moment({firebase}) {
     // subscribe to photos
     useEffect(() => {
         console.debug('streaming photos...');//
-        const cleanup = firebase.firestore().collection('moments').doc(momentId)
+        const cleanup = db.collection('moments').doc(momentId)
             .collection('photos')
             .orderBy('createdAt')
             .onSnapshot(snapshot => {
@@ -52,7 +52,7 @@ function Moment({firebase}) {
         return function photosUnsubscribe() {
             cleanup();
         };
-    }, [firebase, momentId]);
+    }, [db, momentId]);
 
     // fetch images from storage
     // TODO: after image added, 12 requests are sent. check why so many.
@@ -92,7 +92,7 @@ function Moment({firebase}) {
 
     // subscribe to notes
     useEffect(() => {
-        const cleanup = firebase.firestore().collection('moments').doc(momentId)
+        const cleanup = db.collection('moments').doc(momentId)
             .collection('notes')
             .orderBy('createdAt')
             .onSnapshot(snapshot => {
@@ -103,7 +103,7 @@ function Moment({firebase}) {
         return function notesUnsubscribe() {
             cleanup();
         }
-    }, [firebase, momentId]);
+    }, [db, momentId]);
 
     // TODO: remove. this is just to test if the layout can be modified dynamically.
     /*useEffect(() => {

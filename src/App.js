@@ -24,12 +24,12 @@ function App() {
     return (
         <div className="App">
             <Route exact path={["/", "/dashboard"]}>
-                <Dashboard firebase={firebaseApp}/>
+                <Dashboard db={firebaseApp?.firestore()}/>
             </Route>
 
             <Route path="/moment/:momentId">
                 <Header className="Header"/>
-                <Moment firebase={firebaseApp}/>
+                <Moment db={firebaseApp?.firestore()}/>
             </Route>
 
             <footer>
