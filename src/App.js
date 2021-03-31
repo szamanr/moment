@@ -3,9 +3,9 @@ import {Route} from "react-router-dom";
 import Moment from "./Moment";
 import Dashboard from "./Dashboard";
 import Header from "./Header";
-import "./App.css";
 import firebase from "firebase/app";
 import firebaseConfig from "./firebase.config";
+import {AppContainer} from "./styled-components/AppContainer";
 
 function App() {
     const [firebaseApp, setFirebase] = useState(null);
@@ -22,7 +22,7 @@ function App() {
     }, []);
 
     return firebaseApp ? (
-        <div className="App">
+        <AppContainer>
             <Route exact path={["/", "/dashboard"]}>
                 <Dashboard db={firebaseApp.firestore()}/>
             </Route>
@@ -35,7 +35,7 @@ function App() {
             <footer>
                 [footer]
             </footer>
-        </div>
+        </AppContainer>
     ) : (<p>[loading...]</p>);
 }
 

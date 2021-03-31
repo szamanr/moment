@@ -4,6 +4,9 @@
     --lighter-background: #313638;
     --brand: #005dc1;
     --alt: #C26400;
+    --success: #5dc100;
+    --warning: #c16400;
+    --danger: #c1005d;
 }
 
 a {
@@ -33,13 +36,13 @@ input, textarea {
 }
 
 .success {
-    color: #5dc100;
+    color: var(--success);
 }
 
 .warning {
-    color: #c16400;
+    color: var(--warning);
 }
 
 .danger {
-    color: #c1005d;
+    color: var(--danger);
 }
