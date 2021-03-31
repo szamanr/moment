@@ -1,19 +1,6 @@
-main {
-    display: grid;
-    height: 100%;
-    grid-template: repeat(auto-fit, calc(100% / 3)) / auto 1fr auto;
-    overflow: auto;
-}
-
 footer {
     display: grid;
     place-items: center;
-}
-
-main.focused {
-    grid-template-rows: repeat(12, 1fr);
-    border: solid 1px;
-    border-radius: 5px;
 }
 
 #focused-buttons {

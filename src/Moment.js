@@ -9,8 +9,9 @@ import * as LocalStorageService from "./services/localStorage";
 import useLayout from "./hooks/useLayout";
 import FocusedLayout from "./layout/FocusedLayout";
 import {Box, Row} from "./styled-components/containers";
+import {MomentContainer} from "./styled-components/MomentContainer";
 
-function Moment({db}) {
+const Moment = ({db}) => {
     const {momentId} = useParams();
 
     const [focusedElement, setFocusedElement] = useState(null);
@@ -208,7 +209,7 @@ function Moment({db}) {
 
     // not in focused view — display all component based on layout
     return (
-        <main>
+        <MomentContainer>
             {layout.map((row, index) => {
                 return (
                     <Row span={row?.span} key={index}>
@@ -222,8 +223,8 @@ function Moment({db}) {
                     </Row>
                 );
             })}
-        </main>
+        </MomentContainer>
     );
-}
+};
 
 export default withRouter(Moment);
