@@ -21,22 +21,22 @@ function App() {
         firebase.auth().signInWithEmailAndPassword('user1@mailinator.com', 'MomentMoment123#');
     }, []);
 
-    return (
+    return firebaseApp ? (
         <div className="App">
             <Route exact path={["/", "/dashboard"]}>
-                <Dashboard db={firebaseApp?.firestore()}/>
+                <Dashboard db={firebaseApp.firestore()}/>
             </Route>
 
             <Route path="/moment/:momentId">
                 <Header className="Header"/>
-                <Moment db={firebaseApp?.firestore()}/>
+                <Moment db={firebaseApp.firestore()}/>
             </Route>
 
             <footer>
                 [footer]
             </footer>
         </div>
-    );
+    ) : (<p>[loading...]</p>);
 }
 
 export default App;
