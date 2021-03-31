@@ -8,6 +8,7 @@ import * as FirestoreService from "./services/firestore";
 import * as LocalStorageService from "./services/localStorage";
 import useLayout from "./hooks/useLayout";
 import FocusedLayout from "./layout/FocusedLayout";
+import {Box, Row} from "./styled-components/containers";
 
 function Moment({db}) {
     const {momentId} = useParams();
@@ -210,15 +211,15 @@ function Moment({db}) {
         <main>
             {layout.map((row, index) => {
                 return (
-                    <div className={row.className} key={index}>
+                    <Row span={row?.span} key={index}>
                         {row.components.map((component, index) => {
                             return (
-                                <div className="box" key={index}>
+                                <Box key={index}>
                                     {initComponent(component)}
-                                </div>
+                                </Box>
                             );
                         })}
-                    </div>
+                    </Row>
                 );
             })}
         </main>

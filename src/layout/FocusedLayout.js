@@ -2,6 +2,7 @@ import React from "react";
 import {FaPencilRuler, FaTimes, FaTrash} from "react-icons/fa";
 import * as FirestoreService from "../services/firestore";
 import EditableNote from "./EditableNote";
+import {Row} from "../styled-components/containers";
 
 const FocusedLayout = ({element, type, close, remove, isNoteEditing, setIsNoteEditing, momentId}) => {
     /**
@@ -40,7 +41,7 @@ const FocusedLayout = ({element, type, close, remove, isNoteEditing, setIsNoteEd
 
     return (
         <main className="focused">
-            <div id="focused-buttons" className="row">
+            <Row id="focused-buttons">
                 <div className="button danger" id="focused-element-remove"
                      onClick={remove}><span><FaTrash/></span></div>
                 {type === "notes" ? <div className="button warning" id="focused-element-edit"
@@ -51,10 +52,10 @@ const FocusedLayout = ({element, type, close, remove, isNoteEditing, setIsNoteEd
                 </div> : null}
                 <div className="button" id="focused-element-close"
                      onClick={close}><span><FaTimes/></span></div>
-            </div>
-            <div id="focused-element" className={"row focused-" + type}>
+            </Row>
+            <Row id="focused-element" className={`focused-${type}`}>
                 {renderFocusedElement(element, type)}
-            </div>
+            </Row>
         </main>
     );
 };

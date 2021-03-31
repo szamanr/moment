@@ -5,29 +5,7 @@ main {
     overflow: auto;
 }
 
-.row {
-    grid-column: 1 / span 3;
-    justify-content: center;
-    grid-row: span 1;
-
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-}
-
-.row.double {
-    grid-row: span 2;
-}
-
-.row .box {
-    min-height: 150px;
-    max-height: 100%;
-    margin: 5px;
-    border: solid 1px;
-    border-radius: 5px;
-    overflow-y: auto;
-}
-
-.box, footer {
+footer {
     display: grid;
     place-items: center;
 }
