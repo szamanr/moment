@@ -1,6 +1,7 @@
 import React from "react";
 import {FaPencilRuler, FaTimes, FaTrash} from "react-icons/fa";
 import * as FirestoreService from "../services/firestore";
+import EditableNote from "./EditableNote";
 
 const FocusedLayout = ({element, type, close, remove, isNoteEditing, setIsNoteEditing, momentId}) => {
     /**
@@ -11,27 +12,6 @@ const FocusedLayout = ({element, type, close, remove, isNoteEditing, setIsNoteEd
      * @returns {*}
      */
     const renderFocusedElement = (element, type) => {
-        const editableNote = (
-            <div className="note">
-                <div className="title">
-                    <label htmlFor="title">title:</label><br/>
-                    <input type="text" id="title" defaultValue={element.title} onChange={(e) => {
-                        // TODO: debounce input
-                        element.title = e.target.value;
-                        FirestoreService.update(momentId, "notes", element);
-                    }}/>
-                </div>
-                <div className="content">
-                    <label htmlFor="content">content:</label>
-                    <textarea id="content" value={element.content} onChange={(e) => {
-                        element.content = e.target.value;
-                        FirestoreService.update(momentId, "notes", element);
-                    }}/>
-                </div>
-            </div>
-        );
-
-
         switch (type) {
             case 'photos':
                 return (
@@ -39,7 +19,12 @@ const FocusedLayout = ({element, type, close, remove, isNoteEditing, setIsNoteEd
                 );
             case 'notes':
                 if (isNoteEditing) {
-                    return editableNote;
+                    return (
+                        <EditableNote element={element} onChange={(e, field) => {
+                            element[field] = e.target.value;
+                            FirestoreService.update(momentId, "notes", element);
+                        }}/>
+                    );
                 } else {
                     return (
                         <div className="note">
