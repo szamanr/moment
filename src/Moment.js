@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {useParams, withRouter} from 'react-router-dom';
+import {useHistory, useParams, withRouter} from 'react-router-dom';
 import './Moment.css';
 import Notes from "./Notes";
 import Photos from "./Photos";
@@ -7,24 +7,19 @@ import './global.css';
 import * as FirestoreService from "./services/firestore";
 import * as LocalStorageService from "./services/localStorage";
 import useLayout from "./hooks/useLayout";
-import FocusedLayout from "./layout/FocusedLayout";
 import {Box, Row} from "./styled-components/containers";
 import {MomentContainer} from "./styled-components/MomentContainer";
 
-const Moment = ({db}) => {
+const Moment = ({db, setFocused}) => {
     const {momentId} = useParams();
+    const history = useHistory();
 
-    const [focusedElement, setFocusedElement] = useState(null);
-    const [focusedElementId, setFocusedElementId] = useState(null);
-    const [focusedElementType, setFocusedElementType] = useState(null);
     const [photos, setPhotos] = useState(new Map());
     const [notes, setNotes] = useState(new Map());
     const layout = useLayout(db, momentId);
 
     // set flag when uploading photo, so we can display it when upload is finished
     const [isPhotoUploading, setIsPhotoUploading] = useState(false);
-    // flag for note editing mode
-    const [isNoteEditing, setIsNoteEditing] = useState(false);
 
     // mark component as mounted so we don't set any states after unmount
     const isComponentMounted = useRef(true);
@@ -107,10 +102,13 @@ const Moment = ({db}) => {
      * @param element
      * @param type
      */
-    const setFocused = function (type = null, element = null) {
-        setFocusedElement(element);
-        setFocusedElementId(element?.id);
-        setFocusedElementType(type);
+    const setFocusedElement = function (type = null, element = null) {
+        setFocused({
+            type,
+            element
+        });
+
+        history.push(`/moment/${momentId}/${element?.id}`);
     }
 
     /**
@@ -137,36 +135,6 @@ const Moment = ({db}) => {
     }
 
     /**
-     * removes an element with a given id from a given collection
-     *
-     * @param collection
-     * @param id
-     */
-    const remove = function (collection, id) {
-        if (collection === 'photos') {
-            FirestoreService.removeFromStorage(momentId, id).then(() => {
-                console.log('photo deleted from storage.');
-            });
-        }
-
-        FirestoreService.remove(momentId, collection, id).then(() => {
-            console.log('item removed from db.');
-        });
-    }
-
-    /**
-     * removes the focused photo from the list
-     */
-    const removeFocusedElement = function () {
-        if (focusedElementId === null || focusedElementType === null) {
-            return;
-        }
-
-        remove(focusedElementType, focusedElementId);
-        setFocused();
-    }
-
-    /**
      * initialises a component based on its name.
      *
      * @param componentName
@@ -176,38 +144,20 @@ const Moment = ({db}) => {
         switch (componentName) {
             case ('Photos'):
                 return (
-                    <Photos photos={Array.from(photos.values())} onClick={setFocused.bind(null, 'photos')}
+                    <Photos photos={Array.from(photos.values())} onClick={setFocusedElement.bind(null, 'photos')}
                             addPhoto={addPhoto}/>
                 );
             case ('Notes'):
                 return (
                     <Notes notes={Array.from(notes.values())} addNote={(note) => {
                         FirestoreService.add(momentId, 'notes', note)
-                    }} onClick={setFocused.bind(null, 'notes')}/>
+                    }} onClick={setFocusedElement.bind(null, 'notes')}/>
                 );
             default:
                 return componentName;
         }
     }
 
-    // focused view - only display the focused element, stretched to fill full component size
-    if (focusedElement) {
-        return (
-            <FocusedLayout
-                element={focusedElement}
-                type={focusedElementType}
-                close={() => {
-                    setFocused()
-                }}
-                remove={removeFocusedElement}
-                isNoteEditing={isNoteEditing}
-                setIsNoteEditing={setIsNoteEditing}
-                momentId={momentId}
-            />
-        );
-    }
-
-    // not in focused view — display all component based on layout
     return (
         <MomentContainer>
             {layout.map((row, index) => {

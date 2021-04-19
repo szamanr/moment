@@ -6,9 +6,11 @@ import Header from "./Header";
 import firebase from "firebase/app";
 import firebaseConfig from "./firebase.config";
 import {AppContainer} from "./styled-components/AppContainer";
+import FocusedLayout from "./layout/FocusedLayout";
 
 function App() {
     const [firebaseApp, setFirebase] = useState(null);
+    const [focusedElement, setFocused] = useState(null);
 
     useEffect(() => {
         // initialise app or use existing one
@@ -29,7 +31,11 @@ function App() {
 
             <Route path="/moment/:momentId">
                 <Header className="Header"/>
-                <Moment db={firebaseApp.firestore()}/>
+                <Moment db={firebaseApp.firestore()} setFocused={setFocused}/>
+            </Route>
+
+            <Route path="/moment/:momentId/:focusedElementId">
+                <FocusedLayout focused={focusedElement} setFocused={setFocused}/>
             </Route>
 
             <footer>
