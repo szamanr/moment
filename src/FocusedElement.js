@@ -57,7 +57,7 @@ const FocusedElement = ({focused, setFocused}) => {
             case 'notes':
                 if (isNoteEditing) {
                     return (
-                        <EditableNote element={focused} onChange={(e, field) => {
+                        <EditableNote element={focused} onChange={(field, e) => {
                             focused[field] = e.target.value;
                             FirestoreService.update(momentId, "notes", focused);
                         }}/>
@@ -100,15 +100,20 @@ const FocusedElement = ({focused, setFocused}) => {
         close();
     }
 
+    /**
+     * toggles note editing mode
+     */
+    const toggleNoteEdit = () => {
+        setIsNoteEditing((prev) => !prev);
+    };
+
     return (
         <FocusedContainer>
             <Row id="focused-buttons">
                 <div className="button danger" id="focused-element-remove"
                      onClick={remove}><span><FaTrash/></span></div>
                 {focusedElementType === "notes" ?
-                    <div className="button warning" id="focused-element-edit" onClick={() => {
-                        setIsNoteEditing((prev) => !prev);
-                    }}>
+                    <div className="button warning" id="focused-element-edit" onClick={toggleNoteEdit}>
                         <span><FaPencilRuler/></span>
                     </div> : null}
                 <div className="button" id="focused-element-close"

@@ -7,7 +7,7 @@ const EditableNote = ({element, onChange}) => {
             </div>
             <div className="content">
                 <label htmlFor="content">content:</label>
-                <textarea id="content" value={element.content} onChange={onChange.bind(null, 'content')}/>
+                <textarea id="content" defaultValue={element.content} onChange={onChange.bind(null, 'content')}/>
             </div>
         </div>
     );
