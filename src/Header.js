@@ -3,7 +3,7 @@ import './Header.css';
 import {FaCogs, FaLongArrowAltLeft, FaStar, FaUserCircle} from 'react-icons/fa'
 import {Link, useParams} from "react-router-dom";
 
-function Header(props) {
+const Header = () => {
     const {momentId} = useParams();
 
     return (
@@ -25,6 +25,6 @@ function Header(props) {
             </div>
         </header>
     );
-}
+};
 
 export default Header;

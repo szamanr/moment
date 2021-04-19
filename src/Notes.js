@@ -3,27 +3,27 @@ import "./Notes.css";
 import {FaPlus} from "react-icons/fa";
 import NoteProvider from "./providers/NoteProvider";
 
-function Notes(props) {
+const Notes = ({addNote, notes, onClick}) => {
 
     /**
      * adds a new dummy note
      */
-    const addNote = () => {
+    const createNote = () => {
         const note = NoteProvider.getRandomNote();
-        props.addNote(note);
+        addNote(note);
     }
 
     const addNoteElement = (
-        <li key="new" onClick={addNote} className="note note-add" title="add note">
+        <li key="new" onClick={createNote} className="note note-add" title="add note">
             <span className="button brand">
                 <FaPlus/>
             </span>
         </li>
     );
 
-    const notesElement = props.notes.map((note) => {
+    const notesElement = notes.map((note) => {
         return (
-            <li key={note.id} className="note" onClick={props.onClick.bind(null, note)}>
+            <li key={note.id} className="note" onClick={onClick.bind(null, note)}>
                 <span>{note.title}</span>
             </li>
         );
@@ -35,6 +35,6 @@ function Notes(props) {
             {addNoteElement}
         </ul>
     );
-}
+};
 
 export default Notes;
