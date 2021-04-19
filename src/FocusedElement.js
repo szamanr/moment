@@ -1,12 +1,12 @@
 import React, {useState} from "react";
 import {FaPencilRuler, FaTimes, FaTrash} from "react-icons/fa";
-import * as FirestoreService from "../services/firestore";
-import EditableNote from "./EditableNote";
-import {Row} from "../styled-components/containers";
-import {FocusedMomentContainer} from "../styled-components/MomentContainer";
+import * as FirestoreService from "./services/firestore";
+import EditableNote from "./layout/EditableNote";
+import {Row} from "./styled-components/containers";
+import {FocusedMomentContainer} from "./styled-components/MomentContainer";
 import {useHistory, useParams} from "react-router-dom";
 
-const FocusedLayout = ({focused, setFocused}) => {
+const FocusedElement = ({focused, setFocused}) => {
     const {momentId} = useParams();
     const {focusedElementId} = useParams();
     const history = useHistory();
@@ -91,4 +91,4 @@ const FocusedLayout = ({focused, setFocused}) => {
     );
 };
 
-export default FocusedLayout;
+export default FocusedElement;

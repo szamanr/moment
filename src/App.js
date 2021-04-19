@@ -6,7 +6,7 @@ import Header from "./Header";
 import firebase from "firebase/app";
 import firebaseConfig from "./firebase.config";
 import {AppContainer} from "./styled-components/AppContainer";
-import FocusedLayout from "./layout/FocusedLayout";
+import FocusedElement from "./FocusedElement";
 
 function App() {
     const [firebaseApp, setFirebase] = useState(null);
@@ -35,7 +35,7 @@ function App() {
             </Route>
 
             <Route path="/moment/:momentId/:focusedElementId">
-                <FocusedLayout focused={focusedElement} setFocused={setFocused}/>
+                <FocusedElement focused={focusedElement} setFocused={setFocused}/>
             </Route>
 
             <footer>
