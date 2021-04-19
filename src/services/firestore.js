@@ -57,6 +57,23 @@ export const parseMoments = (snapshot) => {
 };
 
 /**
+ * parses a photo from a firestore document snapshot
+ *
+ * @param documentSnapshot
+ * @returns {{item: {src: *, alt: *, id: *}, id}}
+ */
+export const parsePhoto = documentSnapshot => {
+    const id = documentSnapshot.id;
+    const item = {
+        id: id,
+        alt: documentSnapshot.data().alt,
+        src: LocalStorageService.getPhoto(id),
+    };
+
+    return {id, item};
+};
+
+/**
  * parses photos from a firebase snapshot into a map
  *
  * @param snapshot
@@ -65,17 +82,27 @@ export const parseMoments = (snapshot) => {
 export const parsePhotos = snapshot => {
     const items = new Map();
     snapshot?.docs.forEach((documentSnapshot) => {
-        const id = documentSnapshot.id;
-        const item = {
-            id: id,
-            alt: documentSnapshot.data().alt,
-            src: LocalStorageService.getPhoto(id),
-        };
+        const {id, item} = parsePhoto(documentSnapshot);
 
         items.set(id, item);
     });
 
     return items;
+};
+
+/**
+ * parses a note from a firestore document snapshot
+ * @param documentSnapshot
+ * @returns {{item: {id: *, title: *, content: *}, id}}
+ */
+export const parseNote = documentSnapshot => {
+    const id = documentSnapshot.id;
+    const item = {
+        id,
+        title: documentSnapshot.get('title'),
+        content: documentSnapshot.get('content'),
+    }
+    return {id, item};
 };
 
 /**

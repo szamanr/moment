@@ -110,10 +110,7 @@ const Moment = ({db, setFocused}) => {
      * @param type
      */
     const setFocusedElement = function (type = null, element = null) {
-        setFocused({
-            type,
-            element
-        });
+        setFocused(element);
 
         history.push(`/moment/${momentId}/${type}/${element?.id}`);
     }

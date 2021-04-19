@@ -1,10 +1,13 @@
-import React, {useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {FaPencilRuler, FaTimes, FaTrash} from "react-icons/fa";
 import * as FirestoreService from "./services/firestore";
+import {parseNote, parsePhoto} from "./services/firestore";
 import EditableNote from "./layout/EditableNote";
 import {FocusedContainer} from "./styled-components/MomentContainer";
 import {useHistory, useParams} from "react-router-dom";
 import Row, {FocusedRow} from "./styled-components/Row";
+import {FirestoreContext} from "./App";
+import Spinner from "./layout/Spinner";
 
 const FocusedElement = ({focused, setFocused}) => {
     const {momentId} = useParams();
@@ -13,6 +16,32 @@ const FocusedElement = ({focused, setFocused}) => {
     const history = useHistory();
 
     const [isNoteEditing, setIsNoteEditing] = useState(false);
+
+    const db = useContext(FirestoreContext);
+
+    useEffect(() => {
+        (async () => {
+            if (!focused) {
+                const doc = await db.collection('moments').doc(momentId).collection(focusedElementType)
+                    .doc(focusedElementId)
+                    .get();
+                let item;
+                switch (focusedElementType) {
+                    case 'photos':
+                        ({item} = parsePhoto(doc));
+                        break;
+                    case 'notes':
+                        ({item} = parseNote(doc));
+                        break;
+                }
+                setFocused(item);
+            }
+        })();
+    }, [db, focused, focusedElementId, focusedElementType, momentId, setFocused]);
+
+    if (!focused) {
+        return <Spinner size="fit"/>;
+    }
 
     /**
      * renders the focused element in a container corresponding to type
@@ -23,21 +52,21 @@ const FocusedElement = ({focused, setFocused}) => {
         switch (focusedElementType) {
             case 'photos':
                 return (
-                    <img className="photo" src={focused.element.src} alt={focused.element.alt}/>
+                    <img className="photo" src={focused.src} alt={focused.alt}/>
                 );
             case 'notes':
                 if (isNoteEditing) {
                     return (
-                        <EditableNote element={focused.element} onChange={(e, field) => {
-                            focused.element[field] = e.target.value;
-                            FirestoreService.update(momentId, "notes", focused.element);
+                        <EditableNote element={focused} onChange={(e, field) => {
+                            focused[field] = e.target.value;
+                            FirestoreService.update(momentId, "notes", focused);
                         }}/>
                     );
                 } else {
                     return (
                         <div className="note">
-                            <h2 className="title">{focused.element.title}</h2>
-                            <p className="content" dangerouslySetInnerHTML={{__html: focused.element.content}}/>
+                            <h2 className="title">{focused.title}</h2>
+                            <p className="content" dangerouslySetInnerHTML={{__html: focused.content}}/>
                         </div>
                     );
                 }
@@ -86,7 +115,7 @@ const FocusedElement = ({focused, setFocused}) => {
                      onClick={close}><span><FaTimes/></span></div>
             </Row>
             <FocusedRow type={focusedElementType}>
-                {renderFocusedElement(focused.element, focusedElementType)}
+                {renderFocusedElement()}
             </FocusedRow>
         </FocusedContainer>
     );
