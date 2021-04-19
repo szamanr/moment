@@ -1,7 +1,15 @@
 import React from "react";
-import "./Notes.css";
 import {FaPlus} from "react-icons/fa";
 import NoteProvider from "../providers/NoteProvider";
+import styled from "styled-components";
+import Note from "./Note";
+
+const Container = styled.ul`
+  height: 100%;
+  width: 100%;
+  list-style-type: none;
+  padding-left: 0;
+`;
 
 const Notes = ({addNote, notes, onClick}) => {
 
@@ -30,10 +38,10 @@ const Notes = ({addNote, notes, onClick}) => {
     });
 
     return (
-        <ul className="notes">
-            {notesElement}
+        <Container>
+            {notes.map(note => <Note key={note.id} note={note} onClick={onClick.bind(null, note)}/>)}
             {addNoteElement}
-        </ul>
+        </Container>
     );
 };
 

@@ -33,6 +33,8 @@ const FocusedElement = ({focused, setFocused}) => {
                     case 'notes':
                         ({item} = parseNote(doc));
                         break;
+                    default:
+                        break;
                 }
                 setFocused(item);
             }
