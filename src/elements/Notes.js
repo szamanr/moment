@@ -1,8 +1,8 @@
 import React from "react";
-import {FaPlus} from "react-icons/fa";
 import NoteProvider from "../providers/NoteProvider";
 import styled from "styled-components";
 import Note from "./Note";
+import NoteAdd from "./NoteAdd";
 
 const Container = styled.ul`
   height: 100%;
@@ -21,26 +21,10 @@ const Notes = ({addNote, notes, onClick}) => {
         addNote(note);
     }
 
-    const addNoteElement = (
-        <li key="new" onClick={createNote} className="note note-add" title="add note">
-            <span className="button brand">
-                <FaPlus/>
-            </span>
-        </li>
-    );
-
-    const notesElement = notes.map((note) => {
-        return (
-            <li key={note.id} className="note" onClick={onClick.bind(null, note)}>
-                <span>{note.title}</span>
-            </li>
-        );
-    });
-
     return (
         <Container>
             {notes.map(note => <Note key={note.id} note={note} onClick={onClick.bind(null, note)}/>)}
-            {addNoteElement}
+            <NoteAdd key="new" onClick={createNote}/>
         </Container>
     );
 };

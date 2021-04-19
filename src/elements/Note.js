@@ -1,12 +1,12 @@
 import React from 'react';
 import styled from "styled-components";
 
-const Container = styled.li`
+export const StyledNote = styled.li`
   cursor: pointer;
   height: 40px;
   
   &:nth-child(even) {
-    background-color: #2b2b2b;
+    background-color: var(--lighter-background);
   }
   
   > span {
@@ -19,9 +19,9 @@ const Container = styled.li`
 
 const Note = ({note, onClick}) => {
     return (
-        <Container onClick={onClick}>
+        <StyledNote onClick={onClick}>
             <span>{note.title}</span>
-        </Container>
+        </StyledNote>
     );
 };
 
