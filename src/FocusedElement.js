@@ -2,12 +2,13 @@ import React, {useState} from "react";
 import {FaPencilRuler, FaTimes, FaTrash} from "react-icons/fa";
 import * as FirestoreService from "./services/firestore";
 import EditableNote from "./layout/EditableNote";
-import {Row} from "./styled-components/containers";
-import {FocusedMomentContainer} from "./styled-components/MomentContainer";
+import {FocusedContainer} from "./styled-components/MomentContainer";
 import {useHistory, useParams} from "react-router-dom";
+import Row, {FocusedRow} from "./styled-components/Row";
 
 const FocusedElement = ({focused, setFocused}) => {
     const {momentId} = useParams();
+    const {focusedElementType} = useParams();
     const {focusedElementId} = useParams();
     const history = useHistory();
 
@@ -19,7 +20,7 @@ const FocusedElement = ({focused, setFocused}) => {
      * @returns {*}
      */
     const renderFocusedElement = () => {
-        switch (focused.type) {
+        switch (focusedElementType) {
             case 'photos':
                 return (
                     <img className="photo" src={focused.element.src} alt={focused.element.alt}/>
@@ -57,13 +58,13 @@ const FocusedElement = ({focused, setFocused}) => {
      * removes the element currently in focus from the db. in case of photo, also removes the stored image.
      */
     const remove = () => {
-        if (focused.type === 'photos') {
+        if (focusedElementType === 'photos') {
             FirestoreService.removeFromStorage(momentId, focusedElementId).then(() => {
                 console.debug('photo deleted from storage.');
             });
         }
 
-        FirestoreService.remove(momentId, focused.type, focusedElementId).then(() => {
+        FirestoreService.remove(momentId, focusedElementType, focusedElementId).then(() => {
             console.debug('item removed from db.');
         });
 
@@ -71,11 +72,11 @@ const FocusedElement = ({focused, setFocused}) => {
     }
 
     return (
-        <FocusedMomentContainer>
+        <FocusedContainer>
             <Row id="focused-buttons">
                 <div className="button danger" id="focused-element-remove"
                      onClick={remove}><span><FaTrash/></span></div>
-                {focused.type === "notes" ?
+                {focusedElementType === "notes" ?
                     <div className="button warning" id="focused-element-edit" onClick={() => {
                         setIsNoteEditing((prev) => !prev);
                     }}>
@@ -84,10 +85,10 @@ const FocusedElement = ({focused, setFocused}) => {
                 <div className="button" id="focused-element-close"
                      onClick={close}><span><FaTimes/></span></div>
             </Row>
-            <Row id="focused-element" className={`focused-${focused.type}`}>
-                {renderFocusedElement(focused.element, focused.type)}
-            </Row>
-        </FocusedMomentContainer>
+            <FocusedRow type={focusedElementType}>
+                {renderFocusedElement(focused.element, focusedElementType)}
+            </FocusedRow>
+        </FocusedContainer>
     );
 };
 

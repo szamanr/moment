@@ -34,7 +34,7 @@ function App() {
                 <Moment db={firebaseApp.firestore()} setFocused={setFocused}/>
             </Route>
 
-            <Route path="/moment/:momentId/:focusedElementId">
+            <Route path="/moment/:momentId/:focusedElementType/:focusedElementId">
                 <FocusedElement focused={focusedElement} setFocused={setFocused}/>
             </Route>
 

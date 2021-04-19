@@ -1,20 +1,6 @@
 import styled from "styled-components";
 
 /**
- * a single row spanning the container width. can span multiple rows. 3 rows = 1 page.
- *
- * @type {StyledComponent<"div", AnyIfEmpty<DefaultTheme>, {}, never>}
- */
-export const Row = styled.div`
-  grid-column: 1 / span 3;
-  justify-content: center;
-  grid-row: span ${props => props.span ?? 1};
-
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-`;
-
-/**
  * a content box containing a single element: photos, notes, map, player, etc.
  * @type {StyledComponent<"div", AnyIfEmpty<DefaultTheme>, {}, never>}
  */
@@ -28,3 +14,5 @@ export const Box = styled.div`
   display: grid;
   place-items: center;
 `;
+
+export default Box;

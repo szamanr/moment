@@ -8,8 +8,19 @@ export const MomentContainer = styled.main`
   background-color: var(--base-background);
 `;
 
-export const FocusedMomentContainer = styled(MomentContainer)`
+export const FocusedContainer = styled(MomentContainer)`
   grid-template-rows: repeat(12, 1fr);
   border: solid 1px;
   border-radius: 5px;
+
+  #focused-buttons {
+    grid-row: 1;
+    display: flex;
+    place-items: center;
+    font-size: 1.2em;
+    
+    .button {
+      margin: 0.5rem;
+    }
+  }
 `;

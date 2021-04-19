@@ -1,14 +1,14 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {useHistory, useParams, withRouter} from 'react-router-dom';
-import './Moment.css';
 import Notes from "./Notes";
 import Photos from "./Photos";
 import './global.css';
 import * as FirestoreService from "./services/firestore";
 import * as LocalStorageService from "./services/localStorage";
 import useLayout from "./hooks/useLayout";
-import {Box, Row} from "./styled-components/containers";
+import Box from "./styled-components/Box";
 import {MomentContainer} from "./styled-components/MomentContainer";
+import Row from "./styled-components/Row";
 
 const Moment = ({db, setFocused}) => {
     const {momentId} = useParams();
@@ -115,7 +115,7 @@ const Moment = ({db, setFocused}) => {
             element
         });
 
-        history.push(`/moment/${momentId}/${element?.id}`);
+        history.push(`/moment/${momentId}/${type}/${element?.id}`);
     }
 
     /**
