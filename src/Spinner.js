@@ -17,7 +17,7 @@ export const SpinnerContainer = styled.main`
   background-color: var(--base-background);
 `;
 
-const SpinnerDiv = styled.div`
+const StyledSpinner = styled.div`
   display: grid;
   place-items: center;
 
@@ -44,14 +44,14 @@ export const Spinner = ({size}) => {
     const containerHeight = size === 'full' ? '100vh' : size === 'fit' ? '100%' : null;
     return (size === 'full' || size === 'fit') ? (
         <SpinnerContainer height={containerHeight}>
-            <SpinnerDiv id="spinner">
+            <StyledSpinner id="spinner">
                 <div className="lds-dual-ring"/>
-            </SpinnerDiv>
+            </StyledSpinner>
         </SpinnerContainer>
     ) : (
-        <SpinnerDiv id="spinner">
+        <StyledSpinner id="spinner">
             <div className="lds-dual-ring"/>
-        </SpinnerDiv>
+        </StyledSpinner>
     );
 };
 

@@ -3,7 +3,7 @@ import styled from "styled-components";
 import Photo from "./Photo";
 import PhotoAdd from "./PhotoAdd";
 
-const Container = styled.div`
+const StyledPhotos = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -11,12 +11,12 @@ const Container = styled.div`
 
 const Photos = ({addPhoto, onClick, photos}) => {
     return (
-        <Container>
+        <StyledPhotos>
             {photos.map(photo =>
                 <Photo photo={photo} key={photo.id} onClick={onClick.bind(null, photo)}/>
             )}
             <PhotoAdd addPhoto={addPhoto}/>
-        </Container>
+        </StyledPhotos>
     );
 };
 

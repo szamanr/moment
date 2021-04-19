@@ -4,7 +4,7 @@ import styled from "styled-components";
 import Note from "./Note";
 import NoteAdd from "./NoteAdd";
 
-const Container = styled.ul`
+const StyledNotes = styled.ul`
   height: 100%;
   width: 100%;
   list-style-type: none;
@@ -22,10 +22,10 @@ const Notes = ({addNote, notes, onClick}) => {
     }
 
     return (
-        <Container>
+        <StyledNotes>
             {notes.map(note => <Note key={note.id} note={note} onClick={onClick.bind(null, note)}/>)}
             <NoteAdd key="new" onClick={createNote}/>
-        </Container>
+        </StyledNotes>
     );
 };
 

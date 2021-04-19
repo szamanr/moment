@@ -7,8 +7,16 @@ import * as FirestoreService from "./services/firestore";
 import * as LocalStorageService from "./services/localStorage";
 import useLayout from "./hooks/useLayout";
 import Box from "./styled-components/Box";
-import {MomentContainer} from "./styled-components/MomentContainer";
 import Row from "./styled-components/Row";
+import styled from "styled-components";
+
+export const StyledMoment = styled.main`
+  display: grid;
+  height: 100%;
+  grid-template: repeat(auto-fit, calc(100% / 3)) / auto 1fr auto;
+  overflow: auto;
+  background-color: var(--base-background);
+`;
 
 const Moment = ({db, setFocused}) => {
     const {momentId} = useParams();
@@ -163,7 +171,7 @@ const Moment = ({db, setFocused}) => {
     }
 
     return (
-        <MomentContainer>
+        <StyledMoment>
             {layout.map((row, index) => {
                 return (
                     <Row span={row?.span} key={index}>
@@ -177,7 +185,7 @@ const Moment = ({db, setFocused}) => {
                     </Row>
                 );
             })}
-        </MomentContainer>
+        </StyledMoment>
     );
 };
 

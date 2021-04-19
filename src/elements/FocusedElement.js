@@ -3,11 +3,29 @@ import {FaPencilRuler, FaTimes, FaTrash} from "react-icons/fa";
 import * as FirestoreService from "../services/firestore";
 import {parseNote, parsePhoto} from "../services/firestore";
 import NoteEditable from "./NoteEditable";
-import {FocusedContainer} from "../styled-components/MomentContainer";
 import {useHistory, useParams} from "react-router-dom";
 import Row, {FocusedRow} from "../styled-components/Row";
 import {FirestoreContext} from "../App";
 import Spinner from "../Spinner";
+import styled from "styled-components";
+import {StyledMoment} from "../Moment";
+
+const StyledFocusedElement = styled(StyledMoment)`
+  grid-template-rows: repeat(12, 1fr);
+  border: solid 1px;
+  border-radius: 5px;
+
+  #focused-buttons {
+    grid-row: 1;
+    display: flex;
+    place-items: center;
+    font-size: 1.2em;
+    
+    .button {
+      margin: 0.5rem;
+    }
+  }
+`;
 
 const FocusedElement = ({focused, setFocused}) => {
     const {momentId} = useParams();
@@ -110,7 +128,7 @@ const FocusedElement = ({focused, setFocused}) => {
     };
 
     return (
-        <FocusedContainer>
+        <StyledFocusedElement>
             <Row id="focused-buttons">
                 <div className="button danger" id="focused-element-remove"
                      onClick={remove}><span><FaTrash/></span></div>
@@ -124,7 +142,7 @@ const FocusedElement = ({focused, setFocused}) => {
             <FocusedRow type={focusedElementType}>
                 {renderFocusedElement()}
             </FocusedRow>
-        </FocusedContainer>
+        </StyledFocusedElement>
     );
 };
 

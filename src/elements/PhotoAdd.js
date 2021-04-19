@@ -1,6 +1,13 @@
 import React from 'react';
 import {FaPlus} from "react-icons/fa";
-import {AddPhotoContainer} from "../styled-components/PhotoContainer";
+import styled from "styled-components";
+import {StyledPhoto} from "./Photo";
+
+export const StyledAddPhoto = styled(StyledPhoto)`
+  font-size: xx-large;
+  width: 150px;
+  height: 150px;
+`;
 
 const PhotoAdd = ({addPhoto}) => {
     const defaultMetadata = {
@@ -8,7 +15,7 @@ const PhotoAdd = ({addPhoto}) => {
     };
 
     return (
-        <AddPhotoContainer>
+        <StyledAddPhoto>
             <label htmlFor="photo-add" className="button brand" title="add photo">
                 <FaPlus/>
             </label>
@@ -16,7 +23,7 @@ const PhotoAdd = ({addPhoto}) => {
                    onChange={(e) => {
                        addPhoto(e.target.files, defaultMetadata);
                    }}/>
-        </AddPhotoContainer>
+        </StyledAddPhoto>
     );
 };
 
