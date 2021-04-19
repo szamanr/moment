@@ -1,8 +1,3 @@
-footer {
-    display: grid;
-    place-items: center;
-}
-
 #focused-buttons {
     grid-row: 1;
     display: flex;

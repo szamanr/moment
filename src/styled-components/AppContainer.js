@@ -18,6 +18,8 @@ export const AppContainer = styled.div`
 
   footer {
     grid-row: 24;
+    display: grid;
+    place-items: center;
   }
 
   header, main, footer {
