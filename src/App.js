@@ -6,8 +6,8 @@ import Header from "./Header";
 import firebase from "firebase/app";
 import firebaseConfig from "./firebase.config";
 import {AppContainer} from "./styled-components/AppContainer";
-import FocusedElement from "./FocusedElement";
-import Spinner from "./layout/Spinner";
+import FocusedElement from "./elements/FocusedElement";
+import Spinner from "./Spinner";
 
 export const FirestoreContext = React.createContext(null);
 

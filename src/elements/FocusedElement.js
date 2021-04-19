@@ -1,13 +1,13 @@
 import React, {useContext, useEffect, useState} from "react";
 import {FaPencilRuler, FaTimes, FaTrash} from "react-icons/fa";
-import * as FirestoreService from "./services/firestore";
-import {parseNote, parsePhoto} from "./services/firestore";
-import EditableNote from "./layout/EditableNote";
-import {FocusedContainer} from "./styled-components/MomentContainer";
+import * as FirestoreService from "../services/firestore";
+import {parseNote, parsePhoto} from "../services/firestore";
+import NoteEditable from "./NoteEditable";
+import {FocusedContainer} from "../styled-components/MomentContainer";
 import {useHistory, useParams} from "react-router-dom";
-import Row, {FocusedRow} from "./styled-components/Row";
-import {FirestoreContext} from "./App";
-import Spinner from "./layout/Spinner";
+import Row, {FocusedRow} from "../styled-components/Row";
+import {FirestoreContext} from "../App";
+import Spinner from "../Spinner";
 
 const FocusedElement = ({focused, setFocused}) => {
     const {momentId} = useParams();
@@ -57,7 +57,7 @@ const FocusedElement = ({focused, setFocused}) => {
             case 'notes':
                 if (isNoteEditing) {
                     return (
-                        <EditableNote element={focused} onChange={(field, e) => {
+                        <NoteEditable element={focused} onChange={(field, e) => {
                             focused[field] = e.target.value;
                             FirestoreService.update(momentId, "notes", focused);
                         }}/>

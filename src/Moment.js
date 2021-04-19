@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {useHistory, useParams, withRouter} from 'react-router-dom';
-import Notes from "./Notes";
-import Photos from "./Photos";
+import Notes from "./elements/Notes";
+import Photos from "./elements/Photos";
 import './global.css';
 import * as FirestoreService from "./services/firestore";
 import * as LocalStorageService from "./services/localStorage";

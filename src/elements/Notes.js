@@ -1,7 +1,7 @@
 import React from "react";
 import "./Notes.css";
 import {FaPlus} from "react-icons/fa";
-import NoteProvider from "./providers/NoteProvider";
+import NoteProvider from "../providers/NoteProvider";
 
 const Notes = ({addNote, notes, onClick}) => {
 

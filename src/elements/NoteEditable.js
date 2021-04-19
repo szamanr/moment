@@ -1,4 +1,4 @@
-const EditableNote = ({element, onChange}) => {
+const NoteEditable = ({element, onChange}) => {
     return (
         <div className="note">
             <div className="title">
@@ -13,4 +13,4 @@ const EditableNote = ({element, onChange}) => {
     );
 };
 
-export default EditableNote;
+export default NoteEditable;
