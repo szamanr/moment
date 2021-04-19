@@ -29,7 +29,9 @@ const Moment = ({db, setFocused}) => {
         }
     }, []);
 
-    // subscribe to photos
+    /**
+     * subscribes to photos
+     */
     useEffect(() => {
         console.debug('streaming photos...');//
         const cleanup = db.collection('moments').doc(momentId)
@@ -45,8 +47,11 @@ const Moment = ({db, setFocused}) => {
         };
     }, [db, momentId]);
 
-    // fetch images from storage
-    // TODO: after image added, 12 requests are sent. check why so many.
+
+    /**
+     * fetches images from storage
+     * TODO: after image added, 12 requests are sent. check why so many.
+     */
     useEffect(() => {
         for (const photo of photos.values()) {
             const src = LocalStorageService.getPhoto(photo.id);
@@ -81,7 +86,9 @@ const Moment = ({db, setFocused}) => {
         }
     }, [momentId, photos, isPhotoUploading]);
 
-    // subscribe to notes
+    /**
+     * subscribes to notes
+     */
     useEffect(() => {
         const cleanup = db.collection('moments').doc(momentId)
             .collection('notes')
